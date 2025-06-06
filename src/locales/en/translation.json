@@ -1,0 +1,130 @@
+{
+  "login": {
+    "title": "Login to Your Account",
+  "phoneLabel": "Phone Number",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "Enter your password",
+  "login": "Login",
+  "remember": "Remember for 30 days",
+  "forgot": "Forgot password?",
+  "invalidPhone": "Please enter a valid 10-digit phone number.",
+  "invalidPassword": "Password must be at least 6 characters.",
+  "failed": "Login failed. Check phone or password.",
+  "success": "Login successful!",
+  "noAccount": "Don’t have an account?",
+  "register": "Register",
+  "back": "Go back"
+},
+  
+  "register": {
+  "title": "Create an account",
+  "subtitle": "Welcome! Please enter your details",
+  "nameLabel": "Full Name",
+  "namePlaceholder": "Your Name",
+  "phoneLabel": "Phone Number",
+  "passwordLabel": "Password",
+  "passwordPlaceholder": "Minimum 8 characters",
+  "passwordRule": "Must be at least 8 characters",
+  "nameRequired": "Full name is required.",
+  "invalidName": "Name must be at least 3 letters and contain only alphabets.",
+  "invalidPhone": "Please enter a valid 10-digit phone number.",
+  "shortPassword": "Password must be at least 8 characters.",
+  "passwordMismatch": "Passwords do not match.",
+  "signup": "Sign Up",
+  "success": "Account created! Redirecting...",
+  "haveAccount": "Already have an account?",
+  "login": "Login",
+  "back": "Go back"
+},
+
+  "otp": {
+  "title": "Phone number Verification",
+  "subtitle": "Enter the 6-digit code sent to your phone",
+  "verify": "Verify & Continue",
+  "invalid": "Invalid code. Please try again.",
+  "resendText": "Didn't receive the code?",
+  "resend": "Send again",
+  "back": "Go back"
+},
+
+  "verifyOtp": {
+    "title": "Verify OTP",
+    "enterOtpLabel": "Enter the 6-digit OTP sent to your phone",
+    "verifyButton": "Verify OTP",
+    "invalidOtp": "Please enter a valid 6-digit OTP.",
+    "success": "OTP verified! You can now reset your password."
+  },
+  "dashboard": {
+    "recentIncidents": "Recent Incidents"
+  },
+  "map": {
+    "title": "Disaster Map",
+    "youAreHere": "You are here",
+    "filterLabel": "Filter Incidents",
+    "selectAll": "Select All",
+    "clearAll": "Clear All"
+  },
+  "incidentTypes": {
+    "fire": "Fire",
+    "flood": "Flood",
+    "landslide": "Landslide",
+    "accident": "Accident",
+    "garbage": "Garbage",
+    "relief": "Relief",
+    "other": "Other"
+  },
+  
+  "navigation": {
+    "home": "Home",
+    "report": "Report",
+    "map": "Map"
+  },
+  "report": {
+    "title": "Report an Incident",
+    "getLocation": "Get My Location",
+    "locationSet": "Location set",
+    "locationError": "Failed to get location.",
+    "locationFetching": "Getting your location...",
+    "openCamera": "Open Camera",
+    "mediaRequired": "Please capture a photo or video.",
+    "mediaReady": "File ready",
+    "description": "Incident Description",
+    "descriptionPlaceholder": "Describe what happened...",
+    "submit": "Submit Report",
+    "submitting": "Submitting",
+    "success": "Report submitted successfully!",
+    "submitError": "Something went wrong. Please try again."
+  },
+   "profile": {
+    "title": "Profile",
+    "back": "Back",
+    "phone": "Phone Number",
+    "email": "Email",
+    "gender": "Gender",
+    "citizenship": "Citizenship ID",
+    "language": "Preferred Language",
+    "address": "Address",
+    "verification": "Verification",
+    "verified": "Verified",
+    "notVerified": "Not Verified",
+    "fontSize": "Font Size",
+    "fontSizeOptions": {
+      "small": "Small",
+      "medium": "Medium",
+      "large": "Large"
+    },
+    "fontFamily": "Font Family",
+    "theme": "Theme",
+    "toggleTheme": "Toggle Theme",
+    "community": "Community Contribution"
+  },
+  "auth": {
+  "tagline": "From alert to action - Instantly",
+  "login": "Login",
+  "register": "Register"
+  }
+
+
+
+
+}
