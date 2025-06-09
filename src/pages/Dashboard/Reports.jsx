@@ -84,17 +84,29 @@ const ReportForm = () => {
 
     setLoading(true);
 
-    const timestamp = new Date().toISOString();
-    const formData = {
-      location,
-      mediaFile,
-      description,
-      tag,
-      timestamp,
-    };
+    // const formData = {
+    //   location,
+    //   mediaFile,
+    //   description,
+    //   tag,
+    //   timestamp,
+    // };
+    const formData = new FormData();
+
+    formData.append("type", tag); // e.g. "incident"
+    formData.append("description", description); // must be >= 10 characters
+    formData.append("location", JSON.stringify(location)); // [lat, lng] as stringified array
+    formData.append("image", mediaFile); // File object from input[type="file"]
 
     try {
       console.log("📤 Submitting report...", formData);
+      fetch(
+        "http://localhost:3000/api/reports",
+
+        {
+          method: "POST",
+        }
+      );
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
       setSubmitted(true);
