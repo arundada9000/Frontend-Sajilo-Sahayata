@@ -136,7 +136,7 @@ const ReportForm = () => {
         onClick={() => fileInputRef.current.click()}
         className="w-28 h-28 mx-auto mt-6 mb-2 bg-gray-100 flex items-center justify-center rounded-lg cursor-pointer"
       >
-        <img src="/icons/camera.png" alt="Upload" className="w-15 h-15" />
+        <img src="/icons/camera.png" alt="Upload" className="w-25 h-20" />
       </div>
       <input
         ref={fileInputRef}

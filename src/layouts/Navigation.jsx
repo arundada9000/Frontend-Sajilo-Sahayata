@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import ProfileDrawer from "../pages/Dashboard/Profile";
+import { useLocalGovernment } from "../hooks/useLocalGovernment";
 
 const NavigationLayout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+  const localGov = useLocalGovernment();
 
   const [showTopNav, setShowTopNav] = useState(true);
   const [prevScrollY, setPrevScrollY] = useState(0);
@@ -48,6 +50,9 @@ const NavigationLayout = () => {
             onClick={() => navigate("/dashboard/home")}
           />
         </div>
+        <p className="mt-4 text-white absolute top-0 left-[50%] transform -translate-x-1/2">
+          {localGov ? `${localGov}` : "Detecting your local government..."}
+        </p>
       </div>
 
       {/* Main Content */}

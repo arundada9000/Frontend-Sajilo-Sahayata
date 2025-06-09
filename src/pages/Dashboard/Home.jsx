@@ -20,20 +20,37 @@ const Dashboard = () => {
       const data = [
         {
           _id: "1",
-          type: "garbage",
+          type: "fire",
           location: "Butwal, Rupandehi",
-          description: "Garbage left with bad smell and makes the area dirty.",
-          photo:
-            "https://martech.org/wp-content/uploads/2014/08/photos-images-pictures-ss-1920.jpg",
+          description: "Fire in Butwal traffic chowk area.",
+          photo: "fire.jpeg",
           timestamp: "2025-06-07T10:00:00",
           status: "reported",
         },
         {
           _id: "2",
           type: "landslide",
-          location: "Jordhara, Palpa",
+          location: "Milan Chowk, Butwal",
           description: "Roads blocked due to heavy rain and landslides.",
-          photo: "https://cdn.wallpapersafari.com/44/55/kp50Ri.jpg",
+          photo: "landslide.jpeg",
+          timestamp: "2025-06-06T09:00:00",
+          status: "working",
+        },
+        {
+          _id: "3",
+          type: "accident",
+          location: "Yogikuti, Butwal",
+          description: "Plane crash in Yogikuti area.",
+          photo: "accident.jpeg",
+          timestamp: "2025-06-06T09:00:00",
+          status: "solved",
+        },
+        {
+          _id: "4",
+          type: "flood",
+          location: "Falful Chowk, Butwal",
+          description: "Flooding in Falful Chowk area due to heavy rain.",
+          photo: "flood.png",
           timestamp: "2025-06-06T09:00:00",
           status: "working",
         },
@@ -112,7 +129,7 @@ const Dashboard = () => {
             >
               <div className="relative">
                 <img
-                  src={incident.photo}
+                  src={`/assets/dummy/${incident.photo}`}
                   alt={incident.type}
                   className="h-36 w-full object-cover"
                 />
