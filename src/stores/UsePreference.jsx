@@ -1,20 +1,18 @@
 import { create } from "zustand";
 
 const defaultPrefs = {
-  theme: "light", // "dark"
-  fontSize: "base", // "sm", "lg", etc.
-  fontFamily: "arial", // "serif", "mono"
+  theme: "light",
+  fontSize: "base",
+  fontFamily: "arial",
+  language: "en", // Default language
 };
 
 const usePreferences = create((set) => ({
   ...defaultPrefs,
 
   setTheme: (theme) => {
-    // ✅ Apply to body
     document.body.classList.remove("theme-light", "theme-dark");
     document.body.classList.add(`theme-${theme}`);
-
-    // ✅ Save to state and localStorage
     localStorage.setItem("theme", theme);
     set({ theme });
   },
@@ -29,15 +27,19 @@ const usePreferences = create((set) => ({
     set({ fontFamily });
   },
 
+  setLanguage: (language) => {
+    localStorage.setItem("language", language);
+    set({ language });
+  },
+
   loadPreferences: () => {
     const theme = localStorage.getItem("theme") || "light";
     const fontSize = localStorage.getItem("fontSize") || "base";
     const fontFamily = localStorage.getItem("fontFamily") || "sans";
+    const language = localStorage.getItem("language") || "en";
 
-    // Apply theme class on load
     document.body.classList.add(`theme-${theme}`);
-
-    set({ theme, fontSize, fontFamily });
+    set({ theme, fontSize, fontFamily, language });
   },
 }));
 

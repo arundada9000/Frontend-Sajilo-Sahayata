@@ -1,6 +1,6 @@
 {
   "login": {
-    "title": "Login to Your Account",
+  "title": "Login to Your Account",
   "phoneLabel": "Phone Number",
   "passwordLabel": "Password",
   "passwordPlaceholder": "Enter your password",
@@ -57,12 +57,19 @@
   "dashboard": {
     "recentIncidents": "Recent Incidents"
   },
+   "Latest": "Latest",
+  "Oldest": "Oldest",
+  "mapit": {
+    "filterLabel": "Filter Incidents",
+    "selectAll": "All Types"
+  },
   "map": {
     "title": "Disaster Map",
     "youAreHere": "You are here",
     "filterLabel": "Filter Incidents",
     "selectAll": "Select All",
-    "clearAll": "Clear All"
+    "clearAll": "Clear All",
+    "showPath": "Show Path"
   },
   "incidentTypes": {
     "fire": "Fire",
@@ -73,11 +80,50 @@
     "relief": "Relief",
     "other": "Other"
   },
-  
+  "fireAuthorities":{
+  "nearbyFireAuthorities": "Nearby Fire Authorities",
+  "call": "Call"
+},
+"policeAuthorities": {
+  "nearbyPoliceAuthorities": "Nearby Police Authorities",
+  "call": "Call"
+},
+"floodAuthorities": {
+  "nearbyFloodAuthorities": "Nearby Flood Relief",
+  "call": "Call"
+},
+"accidentAuthorities": {
+  "nearbyAccidentAuthorities": "Nearby Accident Response",
+  "call": "Call"
+},
+"landslideAuthorities": {
+  "nearbyLandslideAuthorities": "Nearby Landslide Rescue",
+  "call": "Call"
+},
+"otherAuthorities": {
+  "nearbyOtherAuthorities": "Other Emergency Services",
+  "call": "Call"
+},
+  "selectEmergencyType": "Select Emergency Type",
+  "emergency": {
+    "fire": "Fire",
+    "police": "Police",
+    "flood": "Flood",
+    "accident": "Accident",
+    "landslide": "Landslide",
+    "other": "Other"
+  },
   "navigation": {
     "home": "Home",
     "report": "Report",
-    "map": "Map"
+    "map": "Map",
+    "alerts": "Alerts",
+    "profile": "Profile",
+    "settings": "Settings",
+    "logout": "Logout"
+  },
+   "alerts": {
+    "title": "Emergency Alerts"
   },
   "report": {
     "title": "Report an Incident",
@@ -95,29 +141,24 @@
     "success": "Report submitted successfully!",
     "submitError": "Something went wrong. Please try again."
   },
-   "profile": {
-    "title": "Profile",
-    "back": "Back",
-    "phone": "Phone Number",
-    "email": "Email",
-    "gender": "Gender",
-    "citizenship": "Citizenship ID",
-    "language": "Preferred Language",
-    "address": "Address",
-    "verification": "Verification",
-    "verified": "Verified",
-    "notVerified": "Not Verified",
-    "fontSize": "Font Size",
-    "fontSizeOptions": {
-      "small": "Small",
-      "medium": "Medium",
-      "large": "Large"
-    },
-    "fontFamily": "Font Family",
-    "theme": "Theme",
-    "toggleTheme": "Toggle Theme",
-    "community": "Community Contribution"
+"profile": {
+  "title": "My Profile",
+  "back": "Back",
+  "phone": "Phone",
+  "email": "Email",
+  "gender": "Gender",
+  "citizenship": "Citizenship ID",
+  "address": "Address",
+  "language": "Language",
+  "fontSize": "Font Size",
+  "fontFamily": "Font Family",
+  "theme": "Theme",
+  "verification": "Verification",
+  "verified": "Verified",
+  "notVerified": "Not Verified",
+  "community": "Thank you for being a responsible citizen!"
   },
+
   "auth": {
   "tagline": "From alert to action - Instantly",
   "login": "Login",

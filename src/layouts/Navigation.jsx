@@ -31,70 +31,60 @@ const NavigationLayout = () => {
     }
     return currentPath.includes(path);
   };
+  // TODO: Replace this with user profile fetch logic
+  const userName = "Citizen";
 
   return (
-    <div className="relative min-h-screen bg-red-50 text-gray-800">
+    <div className="relative min-h-screen bg-red-50 text-gray-800 w-full">
       {/* Top Navbar */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-2 bg-white shadow-md transition-transform duration-300 ${
-          showTopNav ? "translate-y-0" : "-translate-y-full"
-        }`}
-      >
-        <div className="text-xl font-bold text-red-600">Sajilo Sahayata</div>
-        <div className="flex items-center gap-4">
-          <IconButton icon="/icons/notification.svg" alt="Notifications" />
-          <IconButton
-            icon="/icons/profile.png"
-            alt="Profile"
-            onClick={() => setShowProfileDrawer(true)}
+      <div className="text-white bg-[#155ac1] px-4 pt-6 pb-2 relative ">
+        <div className="text-lg font-extrabold">{t("Hello")},</div>
+        <div className="text-base">{userName} !</div>
+        <div className="absolute right-4 top-4">
+          <img
+            src="/assets/logo.png"
+            alt="Logo"
+            className="w-15 h-15 rounded-full"
+            onClick={() => navigate("/dashboard/home")}
           />
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <main className="pt-16 pb-20">
+      <main className="pt-1 pb-1">
         <Outlet />
       </main>
 
       {/* Bottom Navbar */}
       <nav
-        className={`fixed  pr-8 bottom-0 left-0 right-0 z-40 bg-white border-t shadow-md transition-transform duration-300 ${
+        className={`fixed  pr-8 bottom-0 left-0 right-0 z-40 bg-[#155ac1] border-t shadow-md transition-transform duration-300 ${
           showBottomNav ? "translate-y-0" : "translate-y-full"
-        }`}
+        }w-full`}
       >
-        {/* Toggle Button */}
-        <div
-          className={`absolute  right-4 z-10 ${
-            showBottomNav ? "top-4" : "-top-8"
-          }`}
-        >
-          <button
-            onClick={() => setShowBottomNav(!showBottomNav)}
-            className={`w-10 h-10 flex items-center justify-center bg-gray-300 text-red-500 text-bold rounded-md shadow-md text-xs transition-all duration-300`}
-            aria-label="Toggle Bottom Navigation"
-          >
-            {showBottomNav ? "⌄" : "⌃"}
-          </button>
-        </div>
-
-        <div className="flex items-center justify-around py-2">
+        <div className="flex items-center justify-around py-1 px-3">
           <NavButton
-            icon="/icons/home.svg"
+            icon="/icons/home-icon.svg"
             label={t("navigation.home")}
             active={isActive("/home")}
             onClick={() => navigate("/dashboard/home")}
           />
           <NavButton
-            icon="/icons/report.png"
+            icon="/icons/emergency-icon.svg"
             label={t("navigation.report")}
             active={isActive("/reports")}
             onClick={() => navigate("/dashboard/reports")}
           />
           <NavButton
-            icon="/icons/map.svg"
+            icon="/icons/location-icon.svg"
             label={t("navigation.map")}
             active={isActive("/map")}
             onClick={() => navigate("/dashboard/map")}
+          />
+          <NavButton
+            icon="/icons/setting-icon.svg"
+            alt="Profile"
+            onClick={() => setShowProfileDrawer(true)}
+            label={t("navigation.settings")}
           />
         </div>
       </nav>
@@ -111,24 +101,12 @@ const NavigationLayout = () => {
 const NavButton = ({ icon, label, active, onClick }) => (
   <button
     onClick={onClick}
-    className={`flex flex-col items-center justify-center p-2 transition duration-200 cursor-pointer hover:scale-110 ${
-      active
-        ? "text-red-600 font-semibold scale-110"
-        : "text-gray-500 hover:text-red-500"
+    className={`flex flex-col items-center justify-center p-1 transition duration-200 cursor-pointer hover:scale-110 ${
+      active ? "text-red-600 scale-110 " : "text-white hover:text-red-500"
     }`}
   >
-    <img src={icon} alt={label} className="w-6 h-6 mb-1" />
+    <img src={icon} alt={label} className="w-9 h-9" />
     <span className="text-xs">{label}</span>
-  </button>
-);
-
-const IconButton = ({ icon, alt, onClick }) => (
-  <button
-    className="p-1 cursor-pointer hover:scale-110 transition duration-300"
-    aria-label={alt}
-    onClick={onClick}
-  >
-    <img src={icon} alt={alt} className="w-6 h-6" />
   </button>
 );
 

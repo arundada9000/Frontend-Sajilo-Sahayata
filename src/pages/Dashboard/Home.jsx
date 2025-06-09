@@ -1,71 +1,155 @@
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import usePreferences from "../../stores/UsePreference";
+import { useLocalGovernment } from "../../hooks/useLocalGovernment";
+import { useLocation, useNavigate, Outlet } from "react-router-dom";
 
-export default function Dashboard() {
-  const { t, i18n } = useTranslation();
+const Dashboard = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [incidents, setIncidents] = useState([]);
+  const [filterType, setFilterType] = useState("all");
+  const [sortOrder, setSortOrder] = useState("latest");
+  const [notification, setNotification] = useState(null);
+  const localGov = useLocalGovernment();
 
-  const switchLanguage = () => {
-    i18n.changeLanguage(i18n.language === "en" ? "np" : "en");
+  useEffect(() => {
+    const fetchData = async () => {
+      // TODO: Replace with API call to fetch incidents
+      const data = [
+        {
+          _id: "1",
+          type: "garbage",
+          location: "Butwal, Rupandehi",
+          description: "Garbage left with bad smell and makes the area dirty.",
+          photo:
+            "https://martech.org/wp-content/uploads/2014/08/photos-images-pictures-ss-1920.jpg",
+          timestamp: "2025-06-07T10:00:00",
+          status: "reported",
+        },
+        {
+          _id: "2",
+          type: "landslide",
+          location: "Jordhara, Palpa",
+          description: "Roads blocked due to heavy rain and landslides.",
+          photo: "https://cdn.wallpapersafari.com/44/55/kp50Ri.jpg",
+          timestamp: "2025-06-06T09:00:00",
+          status: "working",
+        },
+      ];
+      setIncidents(data);
+
+      // TODO: Replace with API call to fetch latest notification
+      const latestNotification = {
+        type: "landslide",
+        location: "Sainamaina-04, Murgiya",
+        description: "Road blocked due to landslide.",
+        timeAgo: "5 minutes ago",
+      };
+      setNotification(latestNotification);
+    };
+    fetchData();
+  }, []);
+
+  const filteredIncidents = incidents
+    .filter(
+      (incident) => filterType === "all" || incident.status === filterType
+    )
+    .sort((a, b) =>
+      sortOrder === "latest"
+        ? new Date(b.timestamp) - new Date(a.timestamp)
+        : new Date(a.timestamp) - new Date(b.timestamp)
+    );
+
+  const statusDotColor = {
+    reported: "bg-red-500",
+    working: "bg-yellow-500",
+    solved: "bg-green-500",
   };
 
   return (
-    <div className="p-4 md:p-8 bg-gray-50 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-xl md:text-3xl font-bold text-gray-800">
-          {t("welcome")}
-        </h1>
-        <button
-          onClick={switchLanguage}
-          className="text-sm px-3 py-1 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700"
-        >
-          {i18n.language === "en" ? "नेपाली" : "English"}
-        </button>
-      </div>
-
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        {[
-          {
-            title: t("activeDisasters"),
-            value: 4,
-            color: "bg-red-100 text-red-700",
-          },
-          {
-            title: t("respondersDeployed"),
-            value: 23,
-            color: "bg-blue-100 text-blue-700",
-          },
-          {
-            title: t("resourcesAvailable"),
-            value: 52,
-            color: "bg-green-100 text-green-700",
-          },
-        ].map((card, i) => (
-          <div key={i} className={`p-4 rounded-xl shadow ${card.color}`}>
-            <h2 className="text-sm font-semibold">{card.title}</h2>
-            <p className="text-2xl font-bold">{card.value}</p>
+    <div className="p-4 space-y-5 max-w-md min-h-full mx-auto bg-[#f7f9fc]">
+      {/* Notification */}
+      {notification && (
+        <div className="bg-[#fae35e] border-2 border-red-400 text-black p-3 rounded-4xl shadow-md relative">
+          <div>
+            <strong className=" text-red-500 font-extrabold">
+              {t("Notification!")}
+            </strong>
+            <p className="text-sm leading-none text-[#264960]">
+              {notification.timeAgo}, a {notification.type} was reported in{" "}
+              {notification.location}.
+            </p>
+            <p className="text-xs mt-1 text-gray-700">
+              {notification.description}
+            </p>
           </div>
-        ))}
+        </div>
+      )}
+
+      {/* Latest Reports */}
+      <div className="space-y-2">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-bold">{t("Latest Reports")}</h2>
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="text-sm text-gray-700 bg-white border border-gray-300 rounded px-2 py-1"
+          >
+            <option value="all">All</option>
+            <option value="reported">Reported</option>
+            <option value="working">Working</option>
+            <option value="solved">Solved</option>
+          </select>
+        </div>
+
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+          {filteredIncidents.map((incident) => (
+            <div
+              key={incident._id}
+              className="relative min-w-[200px] bg-white rounded-xl shadow-md overflow-hidden"
+            >
+              <div className="relative">
+                <img
+                  src={incident.photo}
+                  alt={incident.type}
+                  className="h-36 w-full object-cover"
+                />
+                <div
+                  className={`absolute opacity-80 bottom-1 right-1 w-6 h-6 rounded-full border-2 border-white ${
+                    statusDotColor[incident.status]
+                  }`}
+                ></div>
+              </div>
+              <div className="p-2">
+                <div className="text-xs font-bold text-rose-700">
+                  {incident.location}
+                </div>
+                <div className="text-sm font-semibold capitalize">
+                  {t(`incidentTypes.${incident.type}`)}
+                </div>
+                <p className="text-xs text-gray-600 mt-1 line-clamp-2">
+                  {incident.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Incident List Placeholder */}
-      <div className="bg-white shadow rounded-xl p-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          {t("recentIncidents")}
-        </h3>
-        <ul className="space-y-3">
-          {[1, 2, 3].map((id) => (
-            <li
-              key={id}
-              className="flex justify-between items-center border-b pb-2"
-            >
-              <span className="text-sm text-gray-700">Incident #{id}</span>
-              <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
-                Under Review
-              </span>
-            </li>
-          ))}
-        </ul>
+      {/* SOS Section */}
+      <div className="bg-[#e9403e] p-1 rounded-full shadow-md">
+        <button
+          className="flex items-center justify-center gap-2 bg-[#e9403e] text-white font-semibold text-lg py-0 w-full rounded-full shadow hover:bg-red-600 transition-colors"
+          onClick={() => navigate("/dashboard/emergency-type-selection")}
+        >
+          <img src="/icons/call.svg" alt="Call" className="w-16 h-11" />
+          {t("EMERGENCY CALL")}
+        </button>
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;

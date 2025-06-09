@@ -1,16 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
+
 /* src/index.css */
 :root {
   --font-sans: "Inter", sans-serif;
   --color-bg: #f9fafb;
   --color-text: #111827;
+  width: 100%;
 }
 
 /* Base reset and defaults */
 body {
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   background-color: var(--color-bg);
   color: var(--color-text);
+}
+.font-montserrat {
+  font-family: "Montserrat", sans-serif;
+}
+
+.font-poppins {
+  font-family: "Poppins", sans-serif;
+}
+
+.font-sans {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 }

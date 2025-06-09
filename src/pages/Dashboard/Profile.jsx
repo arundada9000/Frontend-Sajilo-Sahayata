@@ -1,10 +1,30 @@
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import usePreferences from "../../stores/UsePreference.jsx";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../../stores/useAuthStore";
 
 const ProfileDrawer = ({ open, onClose }) => {
-  const { theme, setTheme, fontSize, setFontSize, fontFamily, setFontFamily } =
-    usePreferences();
+  const navigate = useNavigate();
+  const userCheck = useAuthStore((state) => state.user);
+
+  useEffect(() => {
+    if (open && !userCheck) {
+      navigate("/welcome");
+    }
+  }, [open, userCheck, navigate]);
+
+  const {
+    theme,
+    setTheme,
+    fontSize,
+    setFontSize,
+    fontFamily,
+    setFontFamily,
+    language,
+    setLanguage,
+  } = usePreferences();
+
   const { t } = useTranslation();
 
   const user = {
@@ -15,12 +35,10 @@ const ProfileDrawer = ({ open, onClose }) => {
     email: "user@gmail.com",
     gender: "Male",
     citizenshipId: "21 0234 214",
-    language: "English",
     address: "Butwal, Rupandehi",
     isVerified: true,
   };
 
-  // Prevent body scroll on open
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
@@ -81,19 +99,22 @@ const ProfileDrawer = ({ open, onClose }) => {
               label={t("profile.citizenship")}
               value={user.citizenshipId}
             />
-            <InfoRow label={t("profile.language")} value={user.language} />
             <InfoRow label={t("profile.address")} value={user.address} />
           </div>
 
           <div className="bg-gray-50 rounded-lg p-4 space-y-4">
-            <p className="font-medium">
-              {t("profile.verification")}:
-              <span className="ml-2 text-green-600 font-semibold">
-                {user.isVerified
-                  ? t("profile.verified") + " ✅"
-                  : t("profile.notVerified")}
-              </span>
-            </p>
+            <label className="block text-sm font-medium">
+              {t("profile.language")}
+              <select
+                className="w-full mt-1 border rounded px-2 py-1"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+              >
+                <option value="en">English</option>
+                <option value="ne">नेपाली</option>
+                {/* Easy to add more later */}
+              </select>
+            </label>
 
             <label className="block text-sm font-medium">
               {t("profile.fontSize")}
@@ -121,6 +142,7 @@ const ProfileDrawer = ({ open, onClose }) => {
                 <option value="sans">Sans</option>
                 <option value="serif">Serif</option>
                 <option value="mono">Monospace</option>
+                <option value="montserrat">Montserrat</option>
               </select>
             </label>
 

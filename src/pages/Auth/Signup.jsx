@@ -40,8 +40,27 @@ const Register = () => {
     if (!nameValid || !phoneValid || !passwordValid || !passwordsMatch) return;
     // ✅ Store temporary data in Zustand and move to OTP screen
     setStatus("success");
-    setStepData({ name, phone: "+977" + phone, password });
-    navigate("/verify-otp");
+    fetch("http://localhost:3000/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username: name, phone: fullPhone, password }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          setStatus("success");
+          setStepData({ name, phone: "+977" + phone, password });
+          navigate("/verify-otp");
+        } else {
+          setError(data.message || t("register.signupFailed"));
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        setError(t("register.signupError"));
+      });
   };
 
   return (

@@ -7,6 +7,7 @@ import translationNE from "./locales/ne/translation.json";
 const resources = {
   en: { translation: translationEN },
   ne: { translation: translationNE },
+  
 };
 
 i18n

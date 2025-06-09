@@ -95,9 +95,7 @@ const ReportForm = () => {
       <h1 className="text-2xl font-bold text-blue-700 mb-6 text-center">
         {t("report.title")}
       </h1>
-
       {error && <p className="text-red-600 mb-3 text-center">{error}</p>}
-
       <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6">
         {/* Location */}
         <div>
@@ -121,7 +119,6 @@ const ReportForm = () => {
             {t("report.detectLocation")}
           </button>
         </div>
-
         {/* Camera Activation Button or Live Camera */}
         <div>
           <label className="block text-md font-semibold text-gray-700 mb-1">
@@ -163,8 +160,7 @@ const ReportForm = () => {
             />
           )}
         </div>
-
-        {/* Incident Type */}
+        ;{/* Incident Type */}
         <div>
           <label className="block text-md font-semibold text-gray-700 mb-1">
             {t("report.type")}
@@ -182,7 +178,6 @@ const ReportForm = () => {
             ))}
           </select>
         </div>
-
         {/* Description */}
         <div>
           <label className="block text-md font-semibold text-gray-700 mb-1">
@@ -196,7 +191,6 @@ const ReportForm = () => {
             placeholder={t("report.descriptionPlaceholder")}
           />
         </div>
-
         {/* Submit */}
         <button
           type="submit"
@@ -205,7 +199,6 @@ const ReportForm = () => {
           {t("report.submit")}
         </button>
       </form>
-
       <canvas ref={canvasRef} className="hidden" />
     </div>
   );

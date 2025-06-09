@@ -1,0 +1,49 @@
+📦 Problem:
+- react-leaflet-cluster does not support React 19 (only React 17 & 18 in peerDependencies).
+- This causes Vercel build to fail.
+- Downgrading React is not acceptable.
+
+✅ Goal:
+- Keep React 19.
+- Patch react-leaflet-cluster.
+- Deploy successfully to Vercel.
+
+🛠️ Step-by-Step Fix:
+
+1. Install patch-package:
+   npm install patch-package postinstall-postinstall --save-dev
+
+2. Generate a patch for react-leaflet-cluster:
+   npx patch-package react-leaflet-cluster
+
+3. Edit the created patch file in /patches:
+   File: patches/react-leaflet-cluster+<version>.patch
+
+   Inside it, locate:
+     "peerDependencies": {
+       "react": "^17.0.0 || ^18.0.0",
+
+   Change it to:
+     "peerDependencies": {
+       "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
+
+4. Add this to package.json:
+   "scripts": {
+     "postinstall": "patch-package"
+   }
+
+5. Push to GitHub (make sure to include /patches folder in repo)
+
+6. Deploy to Vercel — it will:
+   - Run npm install
+   - Run postinstall script
+   - Apply patch
+   - Build and deploy ✅
+
+📌 Tip: Run `npm ci` locally to simulate a clean Vercel build.
+
+—
+
+🧠 Future Prompt:
+“When I’m ready, help me reapply the React 19 patch fix for react-leaflet-cluster and Vercel using patch-package.”
+
