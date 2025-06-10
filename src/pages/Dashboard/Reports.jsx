@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocalGovernment } from "../../hooks/useLocalGovernment";
-
+import axios from "axios";
 const ReportForm = () => {
   const { t } = useTranslation();
   const [location, setLocation] = useState(null);
@@ -11,20 +11,12 @@ const ReportForm = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [mediaSource, setMediaSource] = useState(""); // "camera" or "gallery"
+  const [mediaSource, setMediaSource] = useState("camera");
 
-  const localGov = useLocalGovernment();
   const fileInputRef = useRef(null);
+  const localGov = useLocalGovernment();
 
-  const tags = [
-    "Accident",
-    "Fire",
-    "Flood",
-    "Other",
-    "Relief",
-    "Landslide",
-    "Garbage",
-  ];
+  const tags = ["incident", "complaint", "suggestion"];
 
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -45,19 +37,11 @@ const ReportForm = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    const now = Date.now();
-    const fileTime = file.lastModified;
-    const timeDiff = now - fileTime;
-    const isCameraPhoto = timeDiff < 30000; // 30 seconds
+    // const now = Date.now();
+    // const timeDiff = now - file.lastModified;
+    // const isCameraPhoto = timeDiff < 30000;
 
-    if (isCameraPhoto) {
-      console.log("✅ Photo was taken just now (camera)");
-      setMediaSource("camera");
-    } else {
-      console.log("⚠️ Photo is likely from gallery");
-      setMediaSource("gallery");
-    }
-
+    // setMediaSource(isCameraPhoto ? "camera" : "gallery");
     setMediaFile(file);
   };
 
@@ -66,49 +50,47 @@ const ReportForm = () => {
     setError("");
     setSubmitted(false);
 
-    if (!mediaFile) {
-      setError(t("report.mediaRequired"));
-      return;
-    }
-
-    if (mediaSource !== "camera") {
-      setError("Please use your camera to take a real-time photo.");
-      return;
-    }
-
     if (!location) {
       getLocation();
       setError(t("report.locationFetching"));
       return;
     }
+    if (mediaSource === "gallery" || !mediaFile) {
+      setError(t("report.mediaRequired"));
+      return;
+    }
+
+    if (!description || description.length < 10) {
+      setError("Description must be at least 10 characters.");
+      return;
+    }
+
+    if (!tag || !["incident", "complaint", "suggestion"].includes(tag)) {
+      setError("Invalid type selected.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("type", tag);
+    formData.append("description", description);
+    formData.append("location", JSON.stringify([location.lat, location.lng]));
+    formData.append("image", mediaFile); // 'file' must match backend field name
 
     setLoading(true);
 
-    // const formData = {
-    //   location,
-    //   mediaFile,
-    //   description,
-    //   tag,
-    //   timestamp,
-    // };
-    const formData = new FormData();
-
-    formData.append("type", tag); // e.g. "incident"
-    formData.append("description", description); // must be >= 10 characters
-    formData.append("location", JSON.stringify(location)); // [lat, lng] as stringified array
-    formData.append("image", mediaFile); // File object from input[type="file"]
-
     try {
-      console.log("📤 Submitting report...", formData);
-      fetch(
+      const response = await axios.post(
         "http://localhost:3000/api/reports",
-
+        formData,
         {
-          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
+      if (response.status !== 201) {
+        throw new Error(t("report.submitError"));
+      }
       setSubmitted(true);
       setLocation(null);
       setMediaFile(null);
@@ -116,7 +98,8 @@ const ReportForm = () => {
       setTag("");
       setMediaSource("");
     } catch (err) {
-      setError(t("report.submitError"));
+      console.error("❌ Report error:", err);
+      setError(err.message || t("report.submitError"));
     } finally {
       setLoading(false);
     }
@@ -167,7 +150,7 @@ const ReportForm = () => {
         >
           {mediaSource === "camera"
             ? "Photo ready"
-            : "Please take a photo using the camera for better accuracy."}
+            : "Please take a real-time photo using the camera."}
         </p>
       )}
 

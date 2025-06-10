@@ -23,7 +23,7 @@ const Welcome = () => {
       {/* Centered container */}
       <div className="flex-1 flex flex-col justify-center items-center text-center">
         <img
-          src="/assets/logo.jpg"
+          src="/assets/logo.png"
           alt="Sajilo Sahayata"
           className="w-64 h-64 object-contain mb-6 hover:rotate-12 transition-all duration-500 cursor-pointer"
           onClick={() => navigate("/")}
