@@ -2,17 +2,13 @@ import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import usePreferences from "../../stores/UsePreference.jsx";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../../stores/useAuthStore";
+import useAuth from "../../stores/useAuth";
+import { useLocalGovernment } from "../../hooks/useLocalGovernment.js";
 
 const ProfileDrawer = ({ open, onClose }) => {
   const navigate = useNavigate();
-  const userCheck = useAuthStore((state) => state.user);
-
-  useEffect(() => {
-    if (open && !userCheck) {
-      navigate("/welcome");
-    }
-  }, [open, userCheck, navigate]);
+  const { t } = useTranslation();
+  const localGov = useLocalGovernment();
 
   const {
     theme,
@@ -25,24 +21,20 @@ const ProfileDrawer = ({ open, onClose }) => {
     setLanguage,
   } = usePreferences();
 
-  const { t } = useTranslation();
-
-  const user = {
-    name: "User",
-    role: "Citizen",
-    city: "Kathmandu",
-    phone: "+977 0000000000",
-    email: "user@gmail.com",
-    gender: "Male",
-    citizenshipId: "21 0234 214",
-    address: "Butwal, Rupandehi",
-    isVerified: true,
-  };
+  const user = useAuth((state) => state.user);
+  const logout = useAuth((state) => state.logout);
+  console.log("👤 User in drawer:", user);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
     return () => (document.body.style.overflow = "auto");
   }, [open]);
+
+  const handleLogout = () => {
+    logout();
+    onClose();
+    navigate("/welcome");
+  };
 
   return (
     <>
@@ -86,21 +78,39 @@ const ProfileDrawer = ({ open, onClose }) => {
                 ✏️
               </button>
             </div>
-            <p className="mt-2 text-lg font-bold">{user.name}</p>
-            <p className="text-gray-500 text-sm">{user.role}</p>
-            <p className="text-sm">📍 {user.city}</p>
+            <p className="mt-2 text-lg font-bold">
+              {user?.username || "Guest"}
+            </p>
+            <p className="text-gray-500 text-sm">
+              {user?.role || "Not logged in"}
+            </p>
+            <p className="text-sm">
+              📍
+              {localGov ? `${localGov}` : "Detecting your local government..."}
+            </p>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-            <InfoRow label={t("profile.phone")} value={user.phone} />
-            <InfoRow label={t("profile.email")} value={user.email} />
-            <InfoRow label={t("profile.gender")} value={user.gender} />
-            <InfoRow
-              label={t("profile.citizenship")}
-              value={user.citizenshipId}
-            />
-            <InfoRow label={t("profile.address")} value={user.address} />
-          </div>
+          {user && (
+            <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+              <InfoRow
+                label={t("profile.phone")}
+                value={user.phoneNumber || "N/A"}
+              />
+              <InfoRow label={t("profile.email")} value={user.email || "N/A"} />
+              <InfoRow
+                label={t("profile.gender")}
+                value={user.gender || "N/A"}
+              />
+              <InfoRow
+                label={t("profile.citizenship")}
+                value={user.citizenshipId || "N/A"}
+              />
+              <InfoRow
+                label={t("profile.address")}
+                value={user.address || "N/A"}
+              />
+            </div>
+          )}
 
           <div className="bg-gray-50 rounded-lg p-4 space-y-4">
             <label className="block text-sm font-medium">
@@ -112,7 +122,6 @@ const ProfileDrawer = ({ open, onClose }) => {
               >
                 <option value="en">English</option>
                 <option value="ne">नेपाली</option>
-                {/* Easy to add more later */}
               </select>
             </label>
 
@@ -159,6 +168,28 @@ const ProfileDrawer = ({ open, onClose }) => {
 
           <div className="bg-white text-center text-md font-medium p-3 rounded-lg shadow border">
             🤝 {t("profile.community")}
+          </div>
+
+          {/* Login/Logout Button */}
+          <div className="text-center mt-4">
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition"
+              >
+                {t("auth.logout") || "Logout"}
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  onClose();
+                  navigate("/login");
+                }}
+                className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition"
+              >
+                {t("auth.login") || "Login"}
+              </button>
+            )}
           </div>
         </div>
       </div>

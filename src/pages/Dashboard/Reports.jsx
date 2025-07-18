@@ -2,6 +2,7 @@ import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocalGovernment } from "../../hooks/useLocalGovernment";
 import axios from "axios";
+
 const ReportForm = () => {
   const { t } = useTranslation();
   const [location, setLocation] = useState(null);
@@ -11,12 +12,20 @@ const ReportForm = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [mediaSource, setMediaSource] = useState("camera");
+  const [mediaSource, setMediaSource] = useState("");
 
   const fileInputRef = useRef(null);
   const localGov = useLocalGovernment();
 
-  const tags = ["incident", "complaint", "suggestion"];
+  const tags = [
+    "fire",
+    "flood",
+    "landslide",
+    "accident",
+    "garbage",
+    "relief",
+    "other",
+  ];
 
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -37,11 +46,11 @@ const ReportForm = () => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // const now = Date.now();
-    // const timeDiff = now - file.lastModified;
-    // const isCameraPhoto = timeDiff < 30000;
+    const now = Date.now();
+    const timeDiff = now - file.lastModified;
+    const isCameraPhoto = timeDiff < 5000;
 
-    // setMediaSource(isCameraPhoto ? "camera" : "gallery");
+    setMediaSource(isCameraPhoto ? "camera" : "gallery");
     setMediaFile(file);
   };
 
@@ -65,7 +74,18 @@ const ReportForm = () => {
       return;
     }
 
-    if (!tag || !["incident", "complaint", "suggestion"].includes(tag)) {
+    if (
+      !tag ||
+      ![
+        "fire",
+        "flood",
+        "accident",
+        "landslide",
+        "garbage",
+        "relief",
+        "other",
+      ].includes(tag)
+    ) {
       setError("Invalid type selected.");
       return;
     }
@@ -129,10 +149,19 @@ const ReportForm = () => {
 
       <div
         onClick={() => fileInputRef.current.click()}
-        className="w-28 h-28 mx-auto mt-6 mb-2 bg-gray-100 flex items-center justify-center rounded-lg cursor-pointer"
+        className="w-28 h-28 mx-auto mt-6 mb-2 bg-gray-100 flex items-center justify-center rounded-lg cursor-pointer overflow-hidden"
       >
-        <img src="/icons/camera.png" alt="Upload" className="w-25 h-20" />
+        {mediaFile ? (
+          <img
+            src={URL.createObjectURL(mediaFile)}
+            alt="Preview"
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <img src="/icons/camera.png" alt="Upload" className="w-25 h-20" />
+        )}
       </div>
+
       <input
         ref={fileInputRef}
         type="file"

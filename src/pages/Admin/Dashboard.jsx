@@ -1,14 +1,30 @@
 import ReportCard from "../../components/ReportCard";
 import SummaryCard from "../../components/SummaryCard";
-import { dummyReports } from "../../data/dummyReports";
+// import { dummyReports as report } from "../../data/dummyReports";
 import ProfileDrawer from "../../pages/Dashboard/Profile";
 import ReportDetailModal from "../../components/ReportDetailModal";
 
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
+import axios from "axios";
 
 const AdminDashboard = () => {
+  const [report, setReport] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/reports");
+        const data = response.data;
+        console.log("Fetched reports:", data);
+        setReport(data);
+      } catch (error) {
+        console.error("Error fetching incidents:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const [selectedReport, setSelectedReport] = useState(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -32,7 +48,7 @@ const AdminDashboard = () => {
       </header>
 
       <div className="grid grid-cols-4 gap-2 mb-4 p-4">
-        <SummaryCard count={dummyReports.length} label="Total Reports" />
+        <SummaryCard count={report.length} label="Total Reports" />
         <SummaryCard count={3} label="In Progress" />
         <SummaryCard count={8} label="Resolved" />
         <SummaryCard count={2} label="Rejected" />
@@ -49,9 +65,9 @@ const AdminDashboard = () => {
       </div>
 
       <div className="pb-7">
-        {dummyReports.map((report) => (
+        {report.map((report) => (
           <ReportCard
-            key={report.id}
+            key={report._id}
             {...report}
             onView={() => setSelectedReport(report)}
           />

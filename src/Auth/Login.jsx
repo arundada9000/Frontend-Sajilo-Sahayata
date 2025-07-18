@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useAuth from "../../stores/useAuth";
-import API from "../../api/axios";
 
 const Login = () => {
   const [phone, setPhone] = useState("");
@@ -16,32 +15,26 @@ const Login = () => {
   const { t } = useTranslation();
   const login = useAuth((state) => state.login);
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     setError("");
     setStatus(null);
 
-    const fullPhone = "+977" + phone;
     const isValidPhone = /^[0-9]{10}$/.test(phone);
     const isValidPassword = password.length >= 6;
 
-    if (!isValidPhone) return setError("Invalid phone number");
-    if (!isValidPassword) return setError("Password too short");
+    if (!isValidPhone) return setError(t("login.invalidPhone"));
+    if (!isValidPassword) return setError(t("login.invalidPassword"));
 
-    try {
-      const res = await API.post("/auth/login", {
-        phone: fullPhone,
-        password,
-      });
+    const fullPhone = "+977" + phone;
 
-      const { user, token } = res.data;
-
-      login(user, token); // ✅ Store in Zustand
+    // ✅ BACKEND LOGIC PLACE
+    if (phone === "9800000000" && password === "password123") {
+      login({ phone: fullPhone, name: "Citizen User" });
       setStatus("success");
       setTimeout(() => navigate("/dashboard/home"), 1000);
-    } catch (err) {
-      console.error("Login error:", err);
-      setError("Login failed. Check phone or password.");
+    } else {
       setStatus("fail");
+      setError(t("login.failed"));
     }
   };
 

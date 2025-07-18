@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import useAuth from "../../stores/useAuth";
 import useRegistration from "../../stores/useRegistration";
-import API from "../../api/axios";
 
 const Register = () => {
   const { t } = useTranslation();
@@ -20,7 +19,7 @@ const Register = () => {
 
   const login = useAuth((state) => state.login);
 
-  const handleSignup = async () => {
+  const handleSignup = () => {
     setError("");
     setStatus(null);
 
@@ -34,22 +33,15 @@ const Register = () => {
     if (!passwordValid) return setError(t("register.shortPassword"));
     if (!passwordsMatch) return setError(t("register.passwordMismatch"));
 
-    try {
-      const response = await API.post("/auth/register", {
-        username: name,
-        phoneNumber: "+977" + phone,
-        password,
-      });
+    const fullPhone = "+977" + phone;
 
-      // setStepData({ name, phoneNumber: "+977" + phone });
-      // setStatus("success");
-      // navigate("/verify-otp");
-      navigate("/signin");
-    } catch (err) {
-      console.error("Signup error", err);
-      setStatus("fail");
-      setError("Something went wrong. Try again.");
-    }
+    // ✅ BACKEND INTEGRATION PLACE
+    login({ name, phone: fullPhone });
+    if (!nameValid || !phoneValid || !passwordValid || !passwordsMatch) return;
+    // ✅ Store temporary data in Zustand and move to OTP screen
+    setStatus("success");
+     
+    navigate("/verify-otp");
   };
 
   return (

@@ -22,7 +22,7 @@ const Dashboard = () => {
 
         setIncidents(data);
 
-        // Demo notification (replace with API later)
+        // Demo notification
         const latestNotification = {
           type: "landslide",
           location: "Sainamaina-04, Murgiya",
@@ -85,21 +85,21 @@ const Dashboard = () => {
       {/* Latest Reports */}
       <div className="space-y-2">
         <div className="flex justify-between items-center">
-          <h2 className="text-xl font-bold">{t("Latest Reports")}</h2>
+          <h2 className="text-xl font-bold">{t("dashboard.latestReports")}</h2>
           <select
             value={filterType}
             onChange={(e) => setFilterType(e.target.value)}
             className="text-sm text-gray-700 bg-white border border-gray-300 rounded px-2 py-1"
           >
-            <option value="all">{t("All")}</option>
-            <option value="reported">{t("Reported")}</option>
-            <option value="working">{t("Working")}</option>
-            <option value="solved">{t("Solved")}</option>
-            <option value="pending">{t("Pending")}</option>
+            <option value="all">{t("dashboard.All")}</option>
+            <option value="reported">{t("dashboard.Reported")}</option>
+            <option value="working">{t("dashboard.Working")}</option>
+            <option value="solved">{t("dashboard.Solved")}</option>
+            <option value="pending">{t("dashboard.Pending")}</option>
           </select>
         </div>
 
-        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex flex-row-reverse gap-4 overflow-x-auto pb-2 scrollbar-hide">
           {filteredIncidents.map((incident) => {
             const status = incident.status || "reported";
             return (
@@ -143,7 +143,7 @@ const Dashboard = () => {
           onClick={() => navigate("/dashboard/emergency-type-selection")}
         >
           <img src="/icons/call.svg" alt="Call" className="w-16 h-11" />
-          {t("EMERGENCY CALL")}
+          {t("dashboard.sahayatacall")}
         </button>
       </div>
     </div>

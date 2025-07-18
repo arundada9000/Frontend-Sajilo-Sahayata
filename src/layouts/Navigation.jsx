@@ -3,12 +3,15 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import ProfileDrawer from "../pages/Dashboard/Profile";
 import { useLocalGovernment } from "../hooks/useLocalGovernment";
+import useAuth from "../stores/useAuth"; // ✅ Use the correct store
 
 const NavigationLayout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const localGov = useLocalGovernment();
+
+  const user = useAuth((state) => state.user); // ✅ Get user from Zustand
 
   const [showTopNav, setShowTopNav] = useState(true);
   const [prevScrollY, setPrevScrollY] = useState(0);
@@ -33,15 +36,15 @@ const NavigationLayout = () => {
     }
     return currentPath.includes(path);
   };
-  // TODO: Replace this with user profile fetch logic
-  const userName = "Citizen";
+
+  const userName = user?.username || t("navigation.citizen");
 
   return (
     <div className="relative min-h-screen bg-red-50 text-gray-800 w-full">
       {/* Top Navbar */}
-      <div className="text-white bg-[#155ac1] px-4 pt-6 pb-2 relative ">
-        <div className="text-lg font-extrabold">{t("Hello")},</div>
-        <div className="text-base">{userName} !</div>
+      <div className="text-white bg-[#155ac1] px-4 pt-6 pb-2 relative">
+        <div className="text-lg font-extrabold">{t("navigation.hello")},</div>
+        <div className="text-base">{userName}!</div>
         <div className="absolute right-4 top-4">
           <img
             src="/assets/logo.png"
@@ -62,9 +65,9 @@ const NavigationLayout = () => {
 
       {/* Bottom Navbar */}
       <nav
-        className={`fixed  pr-8 bottom-0 left-0 right-0 z-40 bg-[#155ac1] border-t shadow-md transition-transform duration-300 ${
+        className={`fixed pr-8 bottom-0 left-0 right-0 z-40 bg-[#155ac1] border-t shadow-md transition-transform duration-300 ${
           showBottomNav ? "translate-y-0" : "translate-y-full"
-        }w-full`}
+        } w-full`}
       >
         <div className="flex items-center justify-around py-1 px-3">
           <NavButton
@@ -107,7 +110,9 @@ const NavButton = ({ icon, label, active, onClick }) => (
   <button
     onClick={onClick}
     className={`flex flex-col items-center justify-center p-1 transition duration-200 cursor-pointer hover:scale-110 ${
-      active ? "text-red-600 scale-110 " : "text-white hover:text-red-500"
+      active
+        ? "text-yellow-300 scale-110 font-bold"
+        : "text-white hover:text-red-500"
     }`}
   >
     <img src={icon} alt={label} className="w-9 h-9" />

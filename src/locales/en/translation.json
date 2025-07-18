@@ -55,7 +55,14 @@
     "success": "OTP verified! You can now reset your password."
   },
   "dashboard": {
-    "recentIncidents": "Recent Incidents"
+    "recentIncidents": "Recent Incidents",
+    "sahayatacall": "Sahayata Call",
+    "Reported": "Reported",
+    "Working": "Working",
+    "Solved": "Solved",
+    "Pending": "Pending",
+    "All": "All",
+    "latestReports": "Latest Reports"
   },
    "Latest": "Latest",
   "Oldest": "Oldest",
@@ -72,6 +79,10 @@
     "showPath": "Show Path"
   },
   "incidentTypes": {
+    "incident": "Incident",
+    "complaint": "Complaint",
+    "suggestion": "Suggestion",
+    "police": "Police",
     "fire": "Fire",
     "flood": "Flood",
     "landslide": "Landslide",
@@ -120,12 +131,28 @@
     "alerts": "Alerts",
     "profile": "Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "hello": "Hello",
+    "citizen": "Citizen",
+    "tillotama": "Tillotama",
+    "butwal": "Butwal",
+    "detectingLocalGovernment": "Detecting your local Government..."
+    
   },
    "alerts": {
     "title": "Emergency Alerts"
   },
   "report": {
+    "selectOption": "Select an option",
+    "reportType": "Report Type",
+    "reportIncident": "Report an Incident",
+    "reportComplaint": "Report a Complaint",
+    "reportSuggestion": "Report a Suggestion",
+    "reportIncidentPlaceholder": "Select the type of incident you want to report",
+
+    "incident": "Report an Incident",
+    "complaint": "File a Complaint",
+    "suggestion": "Make a Suggestion",
     "title": "Report an Incident",
     "getLocation": "Get My Location",
     "locationSet": "Location set",

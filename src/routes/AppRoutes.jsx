@@ -19,12 +19,26 @@ import Navigation from "../layouts/Navigation";
 import Profile from "../pages/Dashboard/Profile";
 import EmergencyTypeSelection from "../pages/Dashboard/EmergencyTypeSelection";
 
-import Fire from "../contactInfo/Fire";
-import Police from "../contactInfo/Police";
-import Flood from "../contactInfo/Flood";
-import Landslide from "../contactInfo/Landslide";
-import Other from "../contactInfo/Other";
-import Accident from "../contactInfo/Accident";
+import Fire from "../contactInfo/butwal//Fire";
+import Police from "../contactInfo/butwal//Police";
+import Flood from "../contactInfo/butwal//Flood";
+import Landslide from "../contactInfo/butwal//Landslide";
+import Other from "../contactInfo/butwal//Other";
+import Accident from "../contactInfo/butwal//Accident";
+
+import TillotamaFire from "../contactInfo/tillotama//Fire";
+import TillotamaPolice from "../contactInfo/tillotama//Police";
+import TillotamaFlood from "../contactInfo/tillotama//Flood";
+import TillotamaLandslide from "../contactInfo/tillotama//Landslide";
+import TillotamaOther from "../contactInfo/tillotama//Other";
+import TillotamaAccident from "../contactInfo/tillotama//Accident";
+
+import SiddharthanagarFire from "../contactInfo/siddharthanagar//Fire";
+import SiddharthanagarPolice from "../contactInfo/siddharthanagar//Police";
+import SiddharthanagarFlood from "../contactInfo/siddharthanagar//Flood";
+import SiddharthanagarLandslide from "../contactInfo/siddharthanagar//Landslide";
+import SiddharthanagarOther from "../contactInfo/siddharthanagar//Other";
+import SiddharthanagarAccident from "../contactInfo/siddharthanagar//Accident";
 
 import AdminDashboard from "../pages/Admin/Dashboard";
 
@@ -53,12 +67,44 @@ const AppRoutes = () => {
             path="emergency-type-selection"
             element={<EmergencyTypeSelection />}
           />
-          <Route path="fire" element={<Fire />} />
-          <Route path="police" element={<Police />} />
-          <Route path="flood" element={<Flood />} />
-          <Route path="landslide" element={<Landslide />} />
-          <Route path="other" element={<Other />} />
-          <Route path="accident" element={<Accident />} />
+          <Route path="butwal/fire" element={<Fire />} />
+          <Route path="butwal/police" element={<Police />} />
+          <Route path="butwal/flood" element={<Flood />} />
+          <Route path="butwal/landslide" element={<Landslide />} />
+          <Route path="butwal/other" element={<Other />} />
+          <Route path="butwal/accident" element={<Accident />} />
+
+          <Route path="tillotama/fire" element={<TillotamaFire />} />
+          <Route path="tillotama/police" element={<TillotamaPolice />} />
+          <Route path="tillotama/flood" element={<TillotamaFlood />} />
+          <Route path="tillotama/landslide" element={<TillotamaLandslide />} />
+          <Route path="tillotama/other" element={<TillotamaOther />} />
+          <Route path="tillotama/accident" element={<TillotamaAccident />} />
+
+          <Route
+            path="siddharthanagar/fire"
+            element={<SiddharthanagarFire />}
+          />
+          <Route
+            path="siddharthanagar/police"
+            element={<SiddharthanagarPolice />}
+          />
+          <Route
+            path="siddharthanagar/flood"
+            element={<SiddharthanagarFlood />}
+          />
+          <Route
+            path="siddharthanagar/landslide"
+            element={<SiddharthanagarLandslide />}
+          />
+          <Route
+            path="siddharthanagar/other"
+            element={<SiddharthanagarOther />}
+          />
+          <Route
+            path="siddharthanagar/accident"
+            element={<SiddharthanagarAccident />}
+          />
         </Route>
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminDashboard />} />

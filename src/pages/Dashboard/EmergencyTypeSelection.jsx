@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useLocalGovernment } from "../../hooks/useLocalGovernment";
 
 const emergencyTypes = [
   { type: "fire", icon: "/icons/fire-red.svg", labelKey: "emergency.fire" },
@@ -26,9 +27,12 @@ const emergencyTypes = [
 const EmergencyTypeSelection = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const localGov = useLocalGovernment();
 
   const handleSelect = (type) => {
-    navigate(`/dashboard/${type}`);
+    console.log(localGov);
+    navigate(`/dashboard/${localGov}/${type}`);
   };
 
   return (

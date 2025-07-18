@@ -27,7 +27,15 @@ const ReportDetailModal = ({ report, onClose }) => {
                 {report.title}
                 <span className="ml-1 w-2 h-2 rounded-full bg-yellow-400 inline-block" />
               </div>
-              <div className="text-sm text-gray-600">{report.location}</div>
+              <div className="text-sm text-gray-600">
+                {" "}
+                {report.location?.coordinates
+                  ? `Lat: ${report.location.coordinates[1].toFixed(
+                      4
+                    )}, Lng: ${report.location.coordinates[0].toFixed(4)}`
+                  : "Location not available"}
+              </div>
+
               <div className="flex gap-2 mt-2 text-xs">
                 <span className="bg-gray-100 px-2 py-1 rounded-md text-gray-700">
                   #{report.id}

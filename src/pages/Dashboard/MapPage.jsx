@@ -16,122 +16,107 @@ const incidentTypesConfig = [
   { key: "other", icon: "❓" },
 ];
 
-// const [incidents, setIncidents] = useState([]);
-
-// useEffect(() => {
-//   async function fetchIncidents() {
-//     try {
-//       const response = await fetch('/api/incidents'); //  API endpoint
-//       const data = await response.json();
-//       setIncidents(data);
-//     } catch (error) {
-//       console.error("Failed to fetch incidents", error);
-//     }
-//   }
-//   fetchIncidents();
-// }, []);
-
 // All available incident types (add more here)
 
-// Dummy incident data
-const incidents = [
-  {
-    id: 1,
-    title: "Fire in Lalitpur",
-    type: "fire",
-    lat: 27.6588,
-    lng: 83.4247,
-    time: "1h ago",
-  },
-  {
-    id: 2,
-    title: "Flood in Bhaktapur",
-    type: "flood",
-    lat: 27.6736,
-    lng: 83.4294,
-    time: "2h ago",
-  },
-  {
-    id: 3,
-    title: "Landslide in Dhading",
-    type: "landslide",
-    lat: 27.6804,
-    lng: 83.4484,
-    time: "5h ago",
-  },
-  {
-    id: 4,
-    title: "Accident in Kalanki",
-    type: "fire",
-    lat: 27.6931,
-    lng: 83.479,
-    time: "6h ago",
-  },
-  {
-    id: 5,
-    title: "Garbage overflow",
-    type: "garbage",
-    lat: 27.6006,
-    lng: 83.3475,
-    time: "Today",
-  },
-  {
-    id: 6,
-    title: "Relief center opened",
-    type: "fire",
-    lat: 27.6719,
-    lng: 83.4174,
-    time: "Now",
-  },
-  {
-    id: 7,
-    title: "Unknown issue",
-    type: "flood",
-    lat: 27.6079,
-    lng: 83.4086,
-    time: "Unknown",
-  },
-  {
-    id: 8,
-    title: "Fire in Butwal",
-    type: "landslide",
-    lat: 27.6617,
-    lng: 83.4606,
-    time: "Unknown",
-  },
-  {
-    id: 9,
-    title: "Flood in Butwal",
-    type: "garbage",
-    lat: 27.66639,
-    lng: 83.47028,
-    time: "Unknown",
-  },
-  {
-    id: 10,
-    title: "Garbage in Butwal",
-    type: "garbage",
-    lat: 27.66472,
-    lng: 83.45556,
-    time: "Unknown",
-  },
-  {
-    id: 11,
-    title: "Accident in Butwal",
-    type: "fire",
-    lat: 27.675,
-    lng: 83.4644,
-    time: "Unknown",
-  },
-  {
-    id: 12,
-    title: "Fire in Butwal",
-    type: "landslide",
-    lat: 27.6725,
-    lng: 83.4736,
-    time: "Unknown",
-  },
-];
+// // Dummy incident data
+// const incidents = [
+//   {
+//     id: 1,
+//     title: "Fire in Lalitpur",
+//     type: "fire",
+//     lat: 27.6588,
+//     lng: 83.4247,
+//     time: "1h ago",
+//   },
+//   {
+//     id: 2,
+//     title: "Flood in Bhaktapur",
+//     type: "flood",
+//     lat: 27.6736,
+//     lng: 83.4294,
+//     time: "2h ago",
+//   },
+//   {
+//     id: 3,
+//     title: "Landslide in Dhading",
+//     type: "landslide",
+//     lat: 27.6804,
+//     lng: 83.4484,
+//     time: "5h ago",
+//   },
+//   {
+//     id: 4,
+//     title: "Accident in Kalanki",
+//     type: "fire",
+//     lat: 27.6931,
+//     lng: 83.479,
+//     time: "6h ago",
+//   },
+//   {
+//     id: 5,
+//     title: "Garbage overflow",
+//     type: "garbage",
+//     lat: 27.6006,
+//     lng: 83.3475,
+//     time: "Today",
+//   },
+//   {
+//     id: 6,
+//     title: "Relief center opened",
+//     type: "fire",
+//     lat: 27.6719,
+//     lng: 83.4174,
+//     time: "Now",
+//   },
+//   {
+//     id: 7,
+//     title: "Unknown issue",
+//     type: "flood",
+//     lat: 27.6079,
+//     lng: 83.4086,
+//     time: "Unknown",
+//   },
+//   {
+//     id: 8,
+//     title: "Fire in Butwal",
+//     type: "landslide",
+//     lat: 27.6617,
+//     lng: 83.4606,
+//     time: "Unknown",
+//   },
+//   {
+//     id: 9,
+//     title: "Flood in Butwal",
+//     type: "garbage",
+//     lat: 27.66639,
+//     lng: 83.47028,
+//     time: "Unknown",
+//   },
+//   {
+//     id: 10,
+//     title: "Garbage in Butwal",
+//     type: "garbage",
+//     lat: 27.66472,
+//     lng: 83.45556,
+//     time: "Unknown",
+//   },
+//   {
+//     id: 11,
+//     title: "Accident in Butwal",
+//     type: "fire",
+//     lat: 27.675,
+//     lng: 83.4644,
+//     time: "Unknown",
+//   },
+//   {
+//     id: 12,
+//     title: "Fire in Butwal",
+//     type: "landslide",
+//     lat: 27.6725,
+//     lng: 83.4736,
+//     time: "Unknown",
+//   },
+// ];
 
 // Leaflet icon generator
 const getIcon = (type) =>
@@ -161,6 +146,28 @@ function LocateButton({ onLocate }) {
 }
 
 const MapPage = () => {
+  const [incidents, setIncidents] = useState([]);
+
+  useEffect(() => {
+    async function fetchIncidents() {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/reportsLocation"
+        ); //  API endpoint
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const data = await response.json();
+        console.log("Fetched incidents:", data);
+
+        setIncidents(data);
+      } catch (error) {
+        console.error("Failed to fetch incidents", error);
+      }
+    }
+    fetchIncidents();
+  }, []);
   const { t } = useTranslation();
   const [position, setPosition] = useState([27.7111, 83.4681]);
   const [userLocation, setUserLocation] = useState(null);
@@ -223,7 +230,7 @@ const MapPage = () => {
                     onChange={() => toggleType(type.key)}
                   />
                   <img
-                    src={`/icons/${type.key}.svg`}
+                    src={`/icons/map-icons-red/${type.key}.svg`}
                     alt={type.key}
                     className="w-5 h-5"
                   />

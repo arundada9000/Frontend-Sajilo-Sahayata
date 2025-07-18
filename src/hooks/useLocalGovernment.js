@@ -9,11 +9,13 @@ export const useLocalGovernment = () => {
   useEffect(() => {
     const detectLocalGov = async () => {
       try {
-        const [butwal, tilottama, omsatiya] = await Promise.all([
-          fetch("/geojson/butwal.json").then((res) => res.json()),
-          fetch("/geojson/tilottama.json").then((res) => res.json()),
-          fetch("/geojson/omsatiya.json").then((res) => res.json()),
-        ]);
+        const [butwal, tilottama, omsatiya, siddharthanagar] =
+          await Promise.all([
+            fetch("/geojson/butwal.json").then((res) => res.json()),
+            fetch("/geojson/tilottama.json").then((res) => res.json()),
+            fetch("/geojson/omsatiya.json").then((res) => res.json()),
+            fetch("/geojson/siddharthanagar.json").then((res) => res.json()),
+          ]);
 
         navigator.geolocation.getCurrentPosition(
           (pos) => {
@@ -22,8 +24,8 @@ export const useLocalGovernment = () => {
               pos.coords.latitude,
             ]);
 
-            const matched = [butwal, tilottama, omsatiya].find((gj) =>
-              turf.booleanPointInPolygon(point, gj)
+            const matched = [butwal, tilottama, omsatiya, siddharthanagar].find(
+              (gj) => turf.booleanPointInPolygon(point, gj)
             );
 
             const name = matched?.properties?.GaPa_NaPa || "Unknown";
