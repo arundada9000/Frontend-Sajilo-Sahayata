@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: Sajilo-Sahayata
+    runtime: node
+    repo: https://github.com/arundada9000/Frontend-Sajilo-Sahayata
+    branch: main
+    rootDir: .
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    startCommand: ""
+    publishDir: dist
+    envVars:
+      - key: NODE_VERSION
+        value: 22.9.0
