@@ -126,12 +126,13 @@ const ReportForm = () => {
   };
 
   return (
-    <div className="bg-white p-4 pt-0 pb-20">
-      <div className="mt-4 text-center">
+    <div className="bg-white min-h-screen px-4 pt-2 pb-24 max-w-xl mx-auto">
+      {/* Get Location Button */}
+      <div className="text-center mt-4">
         <button
           onClick={getLocation}
           type="button"
-          className="bg-[#0047AB] text-white font-medium px-4 py-2 rounded-full flex items-center justify-center mx-auto"
+          className="bg-[#0047AB] text-white font-medium px-5 py-2 rounded-full flex items-center justify-center mx-auto"
         >
           <img
             src="/icons/location.svg"
@@ -147,9 +148,10 @@ const ReportForm = () => {
         )}
       </div>
 
+      {/* Media Upload */}
       <div
         onClick={() => fileInputRef.current.click()}
-        className="w-28 h-28 mx-auto mt-6 mb-2 bg-gray-100 flex items-center justify-center rounded-lg cursor-pointer overflow-hidden"
+        className="w-32 h-32 mx-auto mt-6 mb-2 bg-gray-100 flex items-center justify-center rounded-lg cursor-pointer overflow-hidden border border-gray-300"
       >
         {mediaFile ? (
           <img
@@ -158,7 +160,7 @@ const ReportForm = () => {
             className="w-full h-full object-cover"
           />
         ) : (
-          <img src="/icons/camera.png" alt="Upload" className="w-25 h-20" />
+          <img src="/icons/camera.png" alt="Upload" className="w-20 h-16" />
         )}
       </div>
 
@@ -178,11 +180,12 @@ const ReportForm = () => {
           }`}
         >
           {mediaSource === "camera"
-            ? "Photo ready"
-            : "Please take a real-time photo using the camera."}
+            ? t("report.photoReady")
+            : t("report.useRealTimePhoto")}
         </p>
       )}
 
+      {/* Description */}
       <div className="mb-4">
         <label className="block mb-1 font-medium">
           {t("report.description")}
@@ -192,10 +195,11 @@ const ReportForm = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full border px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
+      {/* Tag Select */}
       <div className="mb-6">
         <label className="block mb-1 font-medium">
           {t("report.selectAuthority")}
@@ -203,7 +207,7 @@ const ReportForm = () => {
         <select
           value={tag}
           onChange={(e) => setTag(e.target.value)}
-          className="w-full border px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-red-500"
+          className="w-full border border-gray-300 px-3 py-2 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">{t("report.selectOption")}</option>
           {tags.map((tagName) => (
@@ -214,6 +218,7 @@ const ReportForm = () => {
         </select>
       </div>
 
+      {/* Feedback */}
       {error && (
         <p className="text-sm text-red-500 text-center mb-2">{error}</p>
       )}
@@ -223,11 +228,12 @@ const ReportForm = () => {
         </p>
       )}
 
+      {/* Submit Button */}
       <button
         onClick={handleSubmit}
         disabled={loading}
         className={`w-full text-white py-2 rounded-md font-semibold text-lg ${
-          loading ? "bg-gray-400" : "bg-[#e9403e]"
+          loading ? "bg-gray-400" : "bg-[#e9403e] hover:bg-[#d82e2c]"
         }`}
       >
         {loading ? t("report.submitting") + "..." : t("report.submit")}

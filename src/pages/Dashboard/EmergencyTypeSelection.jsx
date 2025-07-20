@@ -32,6 +32,7 @@ const EmergencyTypeSelection = () => {
 
   const handleSelect = (type) => {
     console.log(localGov);
+    console.log(`/dashboard/${localGov}/${type}`);
     navigate(`/dashboard/${localGov}/${type}`);
   };
 
@@ -47,7 +48,7 @@ const EmergencyTypeSelection = () => {
           <img
             src="/icons/back.png"
             alt="Back"
-            className="w-10 h-10 object-contain cursor-pointer hover:scale-110 transition-transform duration-200"
+            className="w-8 h-8 object-contain cursor-pointer hover:scale-110 transition-transform duration-200"
           />
         </button>
         <h2 className="text-lg font-semibold mx-auto">
@@ -63,7 +64,7 @@ const EmergencyTypeSelection = () => {
             onClick={() => handleSelect(type)}
             className="bg-white rounded-xl p-4 flex flex-col items-center justify-center shadow hover:shadow-md transition"
           >
-            <img src={icon} alt={type} className="w-18 h-18 mb-2" />
+            <img src={icon} alt={type} className="w-25 h-25 mb-2" />
             <span className="text-sm font-medium text-gray-800">
               {t(labelKey)}
             </span>

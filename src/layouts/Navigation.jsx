@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, Outlet } from "react-router-dom";
 import ProfileDrawer from "../pages/Dashboard/Profile";
 import { useLocalGovernment } from "../hooks/useLocalGovernment";
-import useAuth from "../stores/useAuth"; // ✅ Use the correct store
+import useAuth from "../stores/useAuth";
 
 const NavigationLayout = () => {
   const { t } = useTranslation();
@@ -11,24 +11,16 @@ const NavigationLayout = () => {
   const location = useLocation();
   const localGov = useLocalGovernment();
 
-  const user = useAuth((state) => state.user); // ✅ Get user from Zustand
+  const user = useAuth((state) => state.user);
 
-  const [showTopNav, setShowTopNav] = useState(true);
   const [prevScrollY, setPrevScrollY] = useState(0);
   const [showBottomNav, setShowBottomNav] = useState(true);
   const [showProfileDrawer, setShowProfileDrawer] = useState(false);
 
   const currentPath = location.pathname;
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScroll = window.scrollY;
-      setShowTopNav(prevScrollY > currentScroll || currentScroll < 10);
-      setPrevScrollY(currentScroll);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [prevScrollY]);
+  const underlineRef = useRef(null);
+  const buttonRefs = useRef([]);
 
   const isActive = (path) => {
     if (path === "/home") {
@@ -36,6 +28,43 @@ const NavigationLayout = () => {
     }
     return currentPath.includes(path);
   };
+
+  const navItems = [
+    { path: "/home", index: 0 },
+    { path: "/reports", index: 1 },
+    { path: "/map", index: 2 },
+    { path: "/settings", index: 3 },
+  ];
+
+  const activeIndex =
+    navItems.find((item) =>
+      item.path !== "/settings" ? isActive(item.path) : false
+    )?.index ?? (showProfileDrawer ? 3 : -1);
+
+  // Move underline on activeIndex change
+  useEffect(() => {
+    if (activeIndex >= 0 && buttonRefs.current[activeIndex]) {
+      const button = buttonRefs.current[activeIndex];
+      const rect = button.getBoundingClientRect();
+      const parentRect = button.parentNode.getBoundingClientRect();
+
+      const left = rect.left - parentRect.left + rect.width / 2 - 10; // 20px width / 2
+      if (underlineRef.current) {
+        underlineRef.current.style.left = `${left}px`;
+      }
+    }
+  }, [activeIndex]);
+
+  // Auto hide/show nav on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScroll = window.scrollY;
+      setShowBottomNav(prevScrollY > currentScroll || currentScroll < 10);
+      setPrevScrollY(currentScroll);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [prevScrollY]);
 
   const userName = user?.username || t("navigation.citizen");
 
@@ -65,34 +94,50 @@ const NavigationLayout = () => {
 
       {/* Bottom Navbar */}
       <nav
-        className={`fixed pr-8 bottom-0 left-0 right-0 z-40 bg-[#155ac1] border-t shadow-md transition-transform duration-300 ${
+        className={`fixed bottom-0 left-0 right-0 z-40 bg-[#155ac1] border-t shadow-md transition-transform duration-300 ${
           showBottomNav ? "translate-y-0" : "translate-y-full"
         } w-full`}
       >
-        <div className="flex items-center justify-around py-1 px-3">
+        <div className="relative mx-auto max-w-md w-full flex items-center justify-around py-1 px-3">
+          {/* Underline */}
+          <div
+            ref={underlineRef}
+            className="absolute bottom-0 h-1 bg-yellow-300 transition-all duration-300 ease-in-out"
+            style={{
+              width: "20px",
+              top: "45px",
+              borderRadius: "40px",
+            }}
+          />
+
+          {/* Buttons */}
           <NavButton
+            ref={(el) => (buttonRefs.current[0] = el)}
             icon="/icons/home-icon.svg"
             label={t("navigation.home")}
             active={isActive("/home")}
             onClick={() => navigate("/dashboard/home")}
           />
           <NavButton
+            ref={(el) => (buttonRefs.current[1] = el)}
             icon="/icons/emergency-icon.svg"
             label={t("navigation.report")}
             active={isActive("/reports")}
             onClick={() => navigate("/dashboard/reports")}
           />
           <NavButton
+            ref={(el) => (buttonRefs.current[2] = el)}
             icon="/icons/location-icon.svg"
             label={t("navigation.map")}
             active={isActive("/map")}
             onClick={() => navigate("/dashboard/map")}
           />
           <NavButton
+            ref={(el) => (buttonRefs.current[3] = el)}
             icon="/icons/setting-icon.svg"
-            alt="Profile"
-            onClick={() => setShowProfileDrawer(true)}
             label={t("navigation.settings")}
+            active={showProfileDrawer}
+            onClick={() => setShowProfileDrawer(true)}
           />
         </div>
       </nav>
@@ -106,8 +151,10 @@ const NavigationLayout = () => {
   );
 };
 
-const NavButton = ({ icon, label, active, onClick }) => (
+// NavButton with forwardRef
+const NavButton = forwardRef(({ icon, label, active, onClick }, ref) => (
   <button
+    ref={ref}
     onClick={onClick}
     className={`flex flex-col items-center justify-center p-1 transition duration-200 cursor-pointer hover:scale-110 ${
       active
@@ -115,9 +162,9 @@ const NavButton = ({ icon, label, active, onClick }) => (
         : "text-white hover:text-red-500"
     }`}
   >
-    <img src={icon} alt={label} className="w-9 h-9" />
+    <img src={icon} alt={label} className="w-10 h-10" />
     <span className="text-xs">{label}</span>
   </button>
-);
+));
 
 export default NavigationLayout;

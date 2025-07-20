@@ -33,6 +33,13 @@ import TillotamaLandslide from "../contactInfo/tillotama//Landslide";
 import TillotamaOther from "../contactInfo/tillotama//Other";
 import TillotamaAccident from "../contactInfo/tillotama//Accident";
 
+import OmsatiyaFire from "../contactInfo/omsatiya//Fire";
+import OmsatiyaPolice from "../contactInfo/omsatiya//Police";
+import OmsatiyaFlood from "../contactInfo/omsatiya//Flood";
+import OmsatiyaLandslide from "../contactInfo/omsatiya//Landslide";
+import OmsatiyaOther from "../contactInfo/omsatiya//Other";
+import OmsatiyaAccident from "../contactInfo/omsatiya//Accident";
+
 import SiddharthanagarFire from "../contactInfo/siddharthanagar//Fire";
 import SiddharthanagarPolice from "../contactInfo/siddharthanagar//Police";
 import SiddharthanagarFlood from "../contactInfo/siddharthanagar//Flood";
@@ -80,6 +87,13 @@ const AppRoutes = () => {
           <Route path="tillotama/landslide" element={<TillotamaLandslide />} />
           <Route path="tillotama/other" element={<TillotamaOther />} />
           <Route path="tillotama/accident" element={<TillotamaAccident />} />
+
+          <Route path="omsatiya/fire" element={<OmsatiyaFire />} />
+          <Route path="omsatiya/police" element={<OmsatiyaPolice />} />
+          <Route path="omsatiya/flood" element={<OmsatiyaFlood />} />
+          <Route path="omsatiya/landslide" element={<OmsatiyaLandslide />} />
+          <Route path="omsatiya/other" element={<OmsatiyaOther />} />
+          <Route path="omsatiya/accident" element={<OmsatiyaAccident />} />
 
           <Route
             path="siddharthanagar/fire"

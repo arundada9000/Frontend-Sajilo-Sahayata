@@ -5,6 +5,35 @@ import { useTranslation } from "react-i18next";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { LocateFixed, ChevronDown, CheckCircle, XCircle } from "lucide-react";
+import { useLocation } from "react-router-dom";
+
+function FlyToFocusedIncident({ incident }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (incident) {
+      map.flyTo([incident.lat, incident.lng], 17, {
+        duration: 1.5,
+      });
+    }
+  }, [incident, map]);
+
+  return null;
+}
+
+function FlyToUserLocation({ location }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (location) {
+      map.flyTo(location, 16, {
+        duration: 1.5,
+      });
+    }
+  }, [location, map]);
+
+  return null;
+}
 
 const incidentTypesConfig = [
   { key: "fire", icon: "🔥" },
@@ -16,112 +45,9 @@ const incidentTypesConfig = [
   { key: "other", icon: "❓" },
 ];
 
-// All available incident types (add more here)
-
-// // Dummy incident data
-// const incidents = [
-//   {
-//     id: 1,
-//     title: "Fire in Lalitpur",
-//     type: "fire",
-//     lat: 27.6588,
-//     lng: 83.4247,
-//     time: "1h ago",
-//   },
-//   {
-//     id: 2,
-//     title: "Flood in Bhaktapur",
-//     type: "flood",
-//     lat: 27.6736,
-//     lng: 83.4294,
-//     time: "2h ago",
-//   },
-//   {
-//     id: 3,
-//     title: "Landslide in Dhading",
-//     type: "landslide",
-//     lat: 27.6804,
-//     lng: 83.4484,
-//     time: "5h ago",
-//   },
-//   {
-//     id: 4,
-//     title: "Accident in Kalanki",
-//     type: "fire",
-//     lat: 27.6931,
-//     lng: 83.479,
-//     time: "6h ago",
-//   },
-//   {
-//     id: 5,
-//     title: "Garbage overflow",
-//     type: "garbage",
-//     lat: 27.6006,
-//     lng: 83.3475,
-//     time: "Today",
-//   },
-//   {
-//     id: 6,
-//     title: "Relief center opened",
-//     type: "fire",
-//     lat: 27.6719,
-//     lng: 83.4174,
-//     time: "Now",
-//   },
-//   {
-//     id: 7,
-//     title: "Unknown issue",
-//     type: "flood",
-//     lat: 27.6079,
-//     lng: 83.4086,
-//     time: "Unknown",
-//   },
-//   {
-//     id: 8,
-//     title: "Fire in Butwal",
-//     type: "landslide",
-//     lat: 27.6617,
-//     lng: 83.4606,
-//     time: "Unknown",
-//   },
-//   {
-//     id: 9,
-//     title: "Flood in Butwal",
-//     type: "garbage",
-//     lat: 27.66639,
-//     lng: 83.47028,
-//     time: "Unknown",
-//   },
-//   {
-//     id: 10,
-//     title: "Garbage in Butwal",
-//     type: "garbage",
-//     lat: 27.66472,
-//     lng: 83.45556,
-//     time: "Unknown",
-//   },
-//   {
-//     id: 11,
-//     title: "Accident in Butwal",
-//     type: "fire",
-//     lat: 27.675,
-//     lng: 83.4644,
-//     time: "Unknown",
-//   },
-//   {
-//     id: 12,
-//     title: "Fire in Butwal",
-//     type: "landslide",
-//     lat: 27.6725,
-//     lng: 83.4736,
-//     time: "Unknown",
-//   },
-// ];
-
-// Leaflet icon generator
 const getIcon = (type) =>
   new L.Icon({
-    iconUrl: `/icons/${type}.svg`,
+    iconUrl: `/icons/map-icons-red/${type}.svg`,
     iconSize: [48, 48],
     iconAnchor: [16, 32],
     popupAnchor: [0, -32],
@@ -130,9 +56,19 @@ const getIcon = (type) =>
 // Locate Me button
 function LocateButton({ onLocate }) {
   const map = useMap();
+
   const locate = () => {
-    map.locate({ setView: true, maxZoom: 16 });
-    map.once("locationfound", (e) => onLocate(e.latlng));
+    map.locate({ setView: false });
+    map.once("locationfound", (e) => {
+      const latlng = [e.latlng.lat, e.latlng.lng];
+
+      map.flyTo(latlng, 16, {
+        duration: 1.5,
+      });
+
+      // Update state if needed
+      onLocate(e.latlng);
+    });
   };
   return (
     <button
@@ -147,6 +83,8 @@ function LocateButton({ onLocate }) {
 
 const MapPage = () => {
   const [incidents, setIncidents] = useState([]);
+  const { state } = useLocation();
+  const focusedIncident = state?.focus;
 
   useEffect(() => {
     async function fetchIncidents() {
@@ -184,7 +122,6 @@ const MapPage = () => {
         const latlng = [latitude, longitude];
         setPosition(latlng);
         setUserLocation(latlng);
-        if (mapRef.current) mapRef.current.flyTo(latlng, 16, { duration: 1.5 });
       },
       (err) => console.warn("Geolocation failed:", err.message)
     );
@@ -263,13 +200,19 @@ const MapPage = () => {
         zoom={13}
         scrollWheelZoom={true}
         zoomControl={true}
-        whenCreated={(mapInstance) => (mapRef.current = mapInstance)}
+        whenCreated={(mapInstance) => {
+          mapRef.current = mapInstance;
+        }}
         style={{
           height: "80vh",
           width: "100%",
         }}
         className="z-0"
       >
+        {focusedIncident && <FlyToFocusedIncident incident={focusedIncident} />}
+        {!focusedIncident && userLocation && (
+          <FlyToUserLocation location={userLocation} />
+        )}
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
