@@ -5,7 +5,7 @@ services:
     repo: https://github.com/arundada9000/Frontend-Sajilo-Sahayata
     branch: main
     rootDir: .
-    buildCommand: npm install --legacy-peer-deps && npm run build
+    buildCommand: ./build.sh
     startCommand: ""
     publishDir: dist
     envVars:
