@@ -47,7 +47,10 @@ import SiddharthanagarLandslide from "../contactInfo/siddharthanagar//Landslide"
 import SiddharthanagarOther from "../contactInfo/siddharthanagar//Other";
 import SiddharthanagarAccident from "../contactInfo/siddharthanagar//Accident";
 
-import AdminDashboard from "../pages/Admin/Dashboard";
+import AdminDashboard from "../Admin/Dashboard";
+import ManageUsers from "../Admin/Manage-Users";
+import RequireAdmin from "../auth/RequireAdmin";
+import Unauthorized from "../pages/Unauthorized";
 
 const AppRoutes = () => {
   return (
@@ -59,6 +62,7 @@ const AppRoutes = () => {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
 
         <Route path="/" element={<Navigate to="/dashboard/home" replace />} />
         {/* User Routes with Navigation layout */}
@@ -121,8 +125,22 @@ const AppRoutes = () => {
           />
         </Route>
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminDashboard />} />
-
+        <Route
+          path="/admin"
+          element={
+            <RequireAdmin>
+              <AdminDashboard />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/manage-users"
+          element={
+            <RequireAdmin>
+              <ManageUsers />
+            </RequireAdmin>
+          }
+        />
         {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
       </Routes>

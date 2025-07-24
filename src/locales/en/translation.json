@@ -55,7 +55,7 @@
   "dashboard": {
     "recentIncidents": "Recent Incidents",
     "sahayatacall": "Sahayata Call",
-    "Reported": "Reported",
+    "Verified": "Verified",
     "Working": "Working",
     "Solved": "Solved",
     "Pending": "Pending",
@@ -176,6 +176,7 @@
   },
 
   "auth": {
+  "logout": "Logout",
   "tagline": "From alert to action - Instantly",
   "login": "Login",
   "register": "Register"

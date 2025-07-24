@@ -21,6 +21,7 @@ const Dashboard = () => {
       try {
         const response = await axios.get("http://localhost:3000/api/reports");
         const data = response.data;
+        console.log(...data);
 
         setIncidents(data);
 
@@ -83,7 +84,7 @@ const Dashboard = () => {
     );
 
   const statusDotColor = {
-    reported: "bg-red-500",
+    verified: "bg-red-500",
     working: "bg-yellow-500",
     solved: "bg-green-500",
     pending: "bg-orange-400",
@@ -130,7 +131,7 @@ const Dashboard = () => {
             className="text-sm text-shadow-blue-900 bg-white border border-gray-300 rounded px-2 py-1"
           >
             <option value="all">{t("dashboard.All")}</option>
-            <option value="reported">{t("dashboard.Reported")}</option>
+            <option value="verified">{t("dashboard.Verified")}</option>
             <option value="working">{t("dashboard.Working")}</option>
             <option value="solved">{t("dashboard.Solved")}</option>
             <option value="pending">{t("dashboard.Pending")}</option>

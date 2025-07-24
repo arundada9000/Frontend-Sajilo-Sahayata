@@ -170,6 +170,20 @@ const ProfileDrawer = ({ open, onClose }) => {
             🤝 {t("profile.community")}
           </div>
 
+          {user?.role === "admin" && (
+            <div className="text-center mt-4">
+              <button
+                onClick={() => {
+                  onClose();
+                  navigate("/admin");
+                }}
+                className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition"
+              >
+                🛠 Admin Dashboard
+              </button>
+            </div>
+          )}
+
           {/* Login/Logout Button */}
           <div className="text-center mt-4">
             {user ? (
@@ -183,7 +197,7 @@ const ProfileDrawer = ({ open, onClose }) => {
               <button
                 onClick={() => {
                   onClose();
-                  navigate("/login");
+                  navigate("/welcome");
                 }}
                 className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600 transition"
               >
