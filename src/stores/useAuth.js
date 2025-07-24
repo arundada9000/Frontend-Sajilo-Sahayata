@@ -23,9 +23,9 @@ const useAuth = create((set) => ({
       const fullUser = profileRes.data;
 
       set({ user: fullUser });
-      console.log("✅ Auto login complete:", fullUser);
+      // console.log("✅ Auto login complete:", fullUser);
     } catch (err) {
-      console.log("Not logged in");
+      // console.log("Not logged in");
       set({ user: null });
     }
   },

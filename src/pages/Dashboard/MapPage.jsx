@@ -97,7 +97,7 @@ const MapPage = () => {
         }
 
         const data = await response.json();
-        console.log("Fetched incidents:", data);
+        // console.log("Fetched incidents:", data);
 
         setIncidents(data);
       } catch (error) {

@@ -23,7 +23,7 @@ const ProfileDrawer = ({ open, onClose }) => {
 
   const user = useAuth((state) => state.user);
   const logout = useAuth((state) => state.logout);
-  console.log("👤 User in drawer:", user);
+  // console.log("👤 User in drawer:", user);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "auto";
