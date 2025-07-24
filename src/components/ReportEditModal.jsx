@@ -70,7 +70,7 @@ export default function ReportEditModal({ report, onClose, onUpdate }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-[#00000090] bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white w-full max-w-lg p-6 rounded-lg shadow-lg relative">
         <h2 className="text-xl font-semibold mb-4">Edit Report</h2>
 

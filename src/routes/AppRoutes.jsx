@@ -49,8 +49,11 @@ import SiddharthanagarAccident from "../contactInfo/siddharthanagar//Accident";
 
 import AdminDashboard from "../Admin/Dashboard";
 import ManageUsers from "../Admin/Manage-Users";
+import ManageReports from "../Admin/Manage-Reports";
+import SendAlerts from "../Admin/SendAlerts";
 import RequireAdmin from "../auth/RequireAdmin";
 import Unauthorized from "../pages/Unauthorized";
+import Logout from "../Auth/Logout";
 
 const AppRoutes = () => {
   return (
@@ -63,6 +66,7 @@ const AppRoutes = () => {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/logout" element={<Logout />} />
 
         <Route path="/" element={<Navigate to="/dashboard/home" replace />} />
         {/* User Routes with Navigation layout */}
@@ -138,6 +142,22 @@ const AppRoutes = () => {
           element={
             <RequireAdmin>
               <ManageUsers />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/send-alerts"
+          element={
+            <RequireAdmin>
+              <SendAlerts />
+            </RequireAdmin>
+          }
+        />
+        <Route
+          path="/admin/manage-reports"
+          element={
+            <RequireAdmin>
+              <ManageReports />
             </RequireAdmin>
           }
         />

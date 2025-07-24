@@ -4,6 +4,7 @@ import usePreferences from "../../stores/UsePreference";
 import { useLocalGovernment } from "../../hooks/useLocalGovernment";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API from "../../api/axios";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -11,18 +12,19 @@ const Dashboard = () => {
   const [incidents, setIncidents] = useState([]);
   const [filterType, setFilterType] = useState("all");
   const [sortOrder, setSortOrder] = useState("latest");
-  const [notification, setNotification] = useState(null);
   const localGov = useLocalGovernment();
   const [locationNames, setLocationNames] = useState({});
   const [expandedLocationId, setExpandedLocationId] = useState(null);
+  const [alerts, setAlerts] = useState([]);
+  const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch reports
         const response = await axios.get("http://localhost:3000/api/reports");
         const data = response.data;
         console.log(...data);
-
         setIncidents(data);
 
         // Reverse geocode for all incidents
@@ -50,25 +52,29 @@ const Dashboard = () => {
           })
         );
 
-        // Build and store location name map
         const namesMap = {};
         locationFetches.forEach(({ id, name }) => {
           namesMap[id] = name;
         });
         setLocationNames(namesMap);
 
-        // Demo notification
-        const latestNotification = {
-          type: "landslide",
-          location: "Sainamaina-04, Murgiya",
-          description: "Road blocked due to landslide.",
-          timeAgo: "5 minutes ago",
-        };
-        setNotification(latestNotification);
+        // ✅ Fetch latest alert
+        const alertRes = await axios.get("http://localhost:3000/api/alerts");
+        const alerts = alertRes.data || [];
+
+        const formatted = alerts.map((alert) => ({
+          type: alert.type,
+          location: alert.location || "Unknown area",
+          description: alert.description,
+          timeAgo: new Date(alert.timestamp).toLocaleTimeString(), // optional: use dayjs for "x minutes ago"
+        }));
+
+        setNotifications(formatted);
       } catch (error) {
-        console.error("Error fetching incidents:", error);
+        console.error("Error fetching data:", error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -104,18 +110,25 @@ const Dashboard = () => {
   return (
     <div className="mt-4 p-4 space-y-5 max-w-md sm:max-w-xl md:max-w-3xl lg:max-w-4xl min-h-full mx-auto bg-[#edf2f8] shadow-md rounded-lg">
       {/* Notification */}
-      {notification && (
-        <div className="bg-[#fae35e] text-black p-3 rounded-4xl shadow-[#7e7e68] shadow-md relative">
-          <strong className="text-red-500 font-extrabold">
-            {t("Notification!")}
-          </strong>
-          <p className="text-sm leading-none text-[#264960]">
-            {notification.timeAgo}, a {notification.type} was reported in{" "}
-            {notification.location}.
-          </p>
-          <p className="text-xs mt-1 text-gray-700">
-            {notification.description}
-          </p>
+      {notifications.length > 0 && (
+        <div className="flex overflow-x-auto gap-4 p-2">
+          {notifications.map((notification, index) => (
+            <div
+              key={index}
+              className="min-w-[280px] bg-[#fae35e] text-black p-3 rounded-3xl shadow-[#7e7e68] shadow-md relative"
+            >
+              <strong className="text-red-500 font-extrabold">
+                {t("Notification!")}
+              </strong>
+              <p className="text-sm leading-none text-[#264960]">
+                {notification.timeAgo}, a {notification.type} was reported in{" "}
+                {notification.location}.
+              </p>
+              <p className="text-xs mt-1 text-gray-700">
+                {notification.description}
+              </p>
+            </div>
+          ))}
         </div>
       )}
 

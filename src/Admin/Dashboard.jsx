@@ -1,209 +1,238 @@
 import React, { useEffect, useState } from "react";
-import API from "../api/axios";
-import Modal from "../components/ReportEditModal";
+import { Bar, Pie, Line } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+} from "chart.js";
+import { motion } from "framer-motion";
 import AdminSidebar from "../components/AdminSidebar";
+import API from "../api/axios";
 
-const REPORT_TYPES = [
-  "fire",
-  "police",
-  "flood",
-  "accident",
-  "landslide",
-  "other",
-];
-const STATUS_TYPES = ["pending", "verified", "solved", "working"];
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement
+);
 
-export default function Reports() {
+export default function AdminDashboard() {
   const [reports, setReports] = useState([]);
-  const [filtered, setFiltered] = useState([]);
-  const [filters, setFilters] = useState({ status: "", type: "" });
-  const [selectedReport, setSelectedReport] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [alerts, setAlerts] = useState([]);
 
   useEffect(() => {
-    API.get("/reports")
-      .then((res) => {
-        setReports(res.data);
-        setFiltered(res.data);
-      })
-      .catch((err) => console.error("Error loading reports", err));
+    const fetchAll = async () => {
+      try {
+        const [reportRes, userRes, alertRes] = await Promise.all([
+          API.get("/reports"),
+          API.get("/auth/users"),
+          API.get("/alerts"),
+        ]);
+        setReports(reportRes.data);
+        setUsers(userRes.data);
+        setAlerts(alertRes.data);
+      } catch (err) {
+        console.error("Error fetching data:", err);
+      }
+    };
+
+    fetchAll();
   }, []);
 
-  useEffect(() => {
-    let data = [...reports];
-    if (filters.status) data = data.filter((r) => r.status === filters.status);
-    if (filters.type) data = data.filter((r) => r.type === filters.type);
-    setFiltered(data);
-  }, [filters, reports]);
-
-  const handleEdit = (report) => {
-    setSelectedReport(report);
-    setShowModal(true);
+  // Summary Data
+  const totalReports = reports.length;
+  const totalUsers = users.length;
+  const totalAlerts = alerts.length;
+  const reportStatusCounts = {
+    pending: 0,
+    verified: 0,
+    solved: 0,
+    working: 0,
   };
+  const reportTypeCounts = {};
+  reports.forEach((r) => {
+    reportStatusCounts[r.status] = (reportStatusCounts[r.status] || 0) + 1;
+    reportTypeCounts[r.type] = (reportTypeCounts[r.type] || 0) + 1;
+  });
 
-  const handleUpdate = (updatedReport) => {
-    if (updatedReport.deleted) {
-      setReports((prev) => prev.filter((r) => r._id !== updatedReport._id));
-    } else {
-      const updated = reports.map((r) =>
-        r._id === updatedReport._id ? updatedReport : r
-      );
-      setReports(updated);
-    }
-    setShowModal(false);
-  };
+  const userRoleCounts = users.reduce((acc, u) => {
+    acc[u.role] = (acc[u.role] || 0) + 1;
+    return acc;
+  }, {});
+
+  const alertsByDate = alerts.reduce((acc, alert) => {
+    const date = new Date(alert.timestamp).toLocaleDateString();
+    acc[date] = (acc[date] || 0) + 1;
+    return acc;
+  }, {});
+  const alertDates = Object.keys(alertsByDate);
+  const alertCounts = Object.values(alertsByDate);
 
   return (
-    <div className="flex bg-gradient-to-br from-gray-50 to-white min-h-screen">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <AdminSidebar />
 
       <main className="flex-grow p-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-3">
-            <img src="/assets/logo.png" alt="Logo" className="w-10 h-10" />
-            <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
-              Admin Reports Panel
-            </h1>
-          </div>
-        </div>
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-6"
+        >
+          <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
+            Admin Dashboard
+          </h1>
+        </motion.div>
 
-        {/* Filters */}
-        <div className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-md rounded-xl p-5 mb-8 flex flex-wrap gap-6 items-center">
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Filter by Status
-            </label>
-            <select
-              value={filters.status}
-              onChange={(e) =>
-                setFilters({ ...filters, status: e.target.value })
-              }
-              className="p-2 border rounded-md w-44 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        {/* Summary Cards */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            visible: {
+              transition: {
+                staggerChildren: 0.15,
+              },
+            },
+          }}
+        >
+          {[
+            { label: "Total Reports", count: totalReports },
+            { label: "Pending Reports", count: reportStatusCounts.pending },
+            { label: "Verified Reports", count: reportStatusCounts.verified },
+            { label: "Solved Reports", count: reportStatusCounts.solved },
+            { label: "Working Reports", count: reportStatusCounts.working },
+            { label: "Total Users", count: totalUsers },
+            { label: "Total Alerts", count: totalAlerts },
+          ].map((card, i) => (
+            <motion.div
+              key={i}
+              className="bg-white p-5 rounded-lg shadow hover:shadow-md transition"
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 },
+              }}
             >
-              <option value="">All</option>
-              {STATUS_TYPES.map((s) => (
-                <option key={s} value={s}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
+              <div className="text-sm text-gray-500">{card.label}</div>
+              <div className="text-2xl font-semibold text-indigo-700">
+                {card.count}
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
-              Filter by Type
-            </label>
-            <select
-              value={filters.type}
-              onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-              className="p-2 border rounded-md w-44 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="">All</option>
-              {REPORT_TYPES.map((t) => (
-                <option key={t} value={t}>
-                  {t.charAt(0).toUpperCase() + t.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            onClick={() => setFilters({ status: "", type: "" })}
-            className="ml-auto px-4 py-2 bg-gray-100 hover:bg-gray-200 text-sm rounded-md border border-gray-300"
+        {/* Charts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Pie Chart for Report Status */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white p-5 rounded-lg shadow"
           >
-            Clear Filters
-          </button>
-        </div>
+            <h2 className="text-lg font-semibold mb-3">Reports by Status</h2>
+            <Pie
+              data={{
+                labels: Object.keys(reportStatusCounts),
+                datasets: [
+                  {
+                    data: Object.values(reportStatusCounts),
+                    backgroundColor: [
+                      "#facc15",
+                      "#3b82f6",
+                      "#10b981",
+                      "#a855f7",
+                    ],
+                  },
+                ],
+              }}
+            />
+          </motion.div>
 
-        {/* Report Table */}
-        <div className="overflow-x-auto bg-white rounded-2xl shadow-lg ring-1 ring-gray-200">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Type
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Status
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Description
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Location
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan="5" className="text-center py-6 text-gray-500">
-                    No reports found.
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((report) => (
-                  <tr
-                    key={report._id}
-                    className="hover:bg-indigo-50/20 transition duration-200 ease-in-out"
-                  >
-                    <td className="px-6 py-4 text-sm font-medium text-gray-800 flex items-center gap-2">
-                      <img
-                        src={`/icons/map-icons-red/${report.type}.svg`}
-                        alt={report.type}
-                        className="w-5 h-5"
-                      />
-                      <span className="capitalize">{report.type}</span>
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span
-                        className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                          report.status === "pending"
-                            ? "bg-yellow-100 text-yellow-700"
-                            : report.status === "verified"
-                            ? "bg-blue-100 text-blue-700"
-                            : report.status === "working"
-                            ? "bg-purple-100 text-purple-700"
-                            : "bg-green-100 text-green-700"
-                        }`}
-                      >
-                        {report.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-700">
-                      {report.description?.slice(0, 40)}...
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {report.location?.coordinates?.[1]},{" "}
-                      {report.location?.coordinates?.[0]}
-                    </td>
-                    <td className="px-6 py-4">
-                      <button
-                        onClick={() => handleEdit(report)}
-                        className="px-4 py-1.5 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition shadow-sm"
-                      >
-                        Edit
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+          {/* Bar Chart for Report Types */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white p-5 rounded-lg shadow"
+          >
+            <h2 className="text-lg font-semibold mb-3">Reports by Type</h2>
+            <Bar
+              data={{
+                labels: Object.keys(reportTypeCounts),
+                datasets: [
+                  {
+                    label: "Reports",
+                    data: Object.values(reportTypeCounts),
+                    backgroundColor: "#6366f1",
+                  },
+                ],
+              }}
+              options={{
+                responsive: true,
+                plugins: { legend: { display: false } },
+              }}
+            />
+          </motion.div>
 
-        {/* Modal */}
-        {showModal && selectedReport && (
-          <Modal
-            report={selectedReport}
-            onClose={() => setShowModal(false)}
-            onUpdate={handleUpdate}
-          />
-        )}
+          {/* Pie Chart for User Roles */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white p-5 rounded-lg shadow"
+          >
+            <h2 className="text-lg font-semibold mb-3">Users by Role</h2>
+            <Pie
+              data={{
+                labels: Object.keys(userRoleCounts),
+                datasets: [
+                  {
+                    data: Object.values(userRoleCounts),
+                    backgroundColor: ["#f87171", "#60a5fa", "#34d399"],
+                  },
+                ],
+              }}
+            />
+          </motion.div>
+
+          {/* Line Chart for Alerts Over Time */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5 }}
+            className="bg-white p-5 rounded-lg shadow"
+          >
+            <h2 className="text-lg font-semibold mb-3">Alerts Over Time</h2>
+            <Line
+              data={{
+                labels: alertDates,
+                datasets: [
+                  {
+                    label: "Alerts",
+                    data: alertCounts,
+                    borderColor: "#f59e0b",
+                    backgroundColor: "rgba(251, 191, 36, 0.2)",
+                    tension: 0.3,
+                  },
+                ],
+              }}
+            />
+          </motion.div>
+        </div>
       </main>
     </div>
   );

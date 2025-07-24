@@ -24,17 +24,21 @@ export default function AdminSidebar() {
     },
     {
       label: "Manage Reports",
-      to: "/admin/reports",
+      to: "/admin/manage-reports",
       icon: <FileText size={18} />,
     },
-    { label: "Manage Alerts", to: "/admin/alerts", icon: <Bell size={18} /> },
+    {
+      label: "Manage Alerts",
+      to: "/admin/send-alerts",
+      icon: <Bell size={18} />,
+    },
     { label: "Logout", to: "/logout", icon: <LogOut size={18} /> },
   ];
 
   return (
     <>
       {/* Mobile menu toggle */}
-      <div className="md:hidden fixed top-4 left-4 z-50">
+      <div className="md:hidden fixed top-4 left-4 z-50 min-h-screen">
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="text-white bg-gray-800 p-2 rounded shadow"
