@@ -1,9 +1,12 @@
+// ✅ AppRoutes.jsx with Framer Motion page transitions
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import Signin from "../pages/Auth/Login";
 import Signup from "../pages/Auth/Signup";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
@@ -12,7 +15,6 @@ import VerifyOTP from "../pages/Auth/VerifyOTP";
 import DashboardHome from "../pages/Dashboard/Home";
 import DashboardAlerts from "../pages/Dashboard/Alerts";
 import DashboardReports from "../pages/Dashboard/Reports";
-import UserProfile from "../pages/Dashboard/Profile";
 import MapPage from "../pages/Dashboard/MapPage";
 import ReportForm from "../pages/Reports/ReportForm";
 import Navigation from "../layouts/Navigation";
@@ -54,11 +56,14 @@ import SendAlerts from "../Admin/SendAlerts";
 import RequireAdmin from "../auth/RequireAdmin";
 import Unauthorized from "../pages/Unauthorized";
 import Logout from "../Auth/Logout";
+import AdminLayout from "../layouts/AdminLayout";
 
-const AppRoutes = () => {
+const AnimatedRoutes = () => {
+  const location = useLocation();
+
   return (
-    <Router>
-      <Routes>
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
         {/* Public/Auth Routes */}
         <Route path="/welcome" element={<Welcome />} />
         <Route path="/signin" element={<Signin />} />
@@ -69,12 +74,12 @@ const AppRoutes = () => {
         <Route path="/logout" element={<Logout />} />
 
         <Route path="/" element={<Navigate to="/dashboard/home" replace />} />
+
         {/* User Routes with Navigation layout */}
         <Route path="/dashboard" element={<Navigation />}>
           <Route path="home" element={<DashboardHome />} />
           <Route path="alerts" element={<DashboardAlerts />} />
           <Route path="reports" element={<DashboardReports />} />
-          <Route path="profile" element={<UserProfile />} />
           <Route path="map" element={<MapPage />} />
           <Route path="report" element={<ReportForm />} />
           <Route path="profile" element={<Profile />} />
@@ -128,42 +133,33 @@ const AppRoutes = () => {
             element={<SiddharthanagarAccident />}
           />
         </Route>
+
         {/* Admin Routes */}
         <Route
           path="/admin"
           element={
             <RequireAdmin>
-              <AdminDashboard />
+              <AdminLayout />
             </RequireAdmin>
           }
-        />
-        <Route
-          path="/admin/manage-users"
-          element={
-            <RequireAdmin>
-              <ManageUsers />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/send-alerts"
-          element={
-            <RequireAdmin>
-              <SendAlerts />
-            </RequireAdmin>
-          }
-        />
-        <Route
-          path="/admin/manage-reports"
-          element={
-            <RequireAdmin>
-              <ManageReports />
-            </RequireAdmin>
-          }
-        />
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="manage-users" element={<ManageUsers />} />
+          <Route path="send-alerts" element={<SendAlerts />} />
+          <Route path="manage-reports" element={<ManageReports />} />
+        </Route>
+
         {/* Catch-all route */}
         <Route path="*" element={<Navigate to="/dashboard/home" replace />} />
       </Routes>
+    </AnimatePresence>
+  );
+};
+
+const AppRoutes = () => {
+  return (
+    <Router>
+      <AnimatedRoutes />
     </Router>
   );
 };

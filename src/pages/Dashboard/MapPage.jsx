@@ -1,18 +1,31 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  Tooltip,
+  useMap,
+} from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import { useTranslation } from "react-i18next";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { LocateFixed, ChevronDown, CheckCircle, XCircle } from "lucide-react";
+import {
+  LocateFixed,
+  ChevronDown,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 function FlyToFocusedIncident({ incident }) {
   const map = useMap();
 
   useEffect(() => {
     if (incident) {
-      map.flyTo([incident.lat, incident.lng], 17, {
+      map.flyTo([incident.lat, incident.lng], 19, {
         duration: 1.5,
       });
     }
@@ -53,7 +66,17 @@ const getIcon = (type) =>
     popupAnchor: [0, -32],
   });
 
-// Locate Me button
+const getFocusedIcon = (type) =>
+  new L.DivIcon({
+    className: "focused-marker-glow",
+    html: `<div class='relative'>
+             <img src="/icons/map-icons-red/${type}.svg" class="animate-bounce-glow w-12 h-12" />
+           </div>`,
+    iconSize: [48, 48],
+    iconAnchor: [24, 48],
+    popupAnchor: [0, -40],
+  });
+
 function LocateButton({ onLocate }) {
   const map = useMap();
 
@@ -61,12 +84,9 @@ function LocateButton({ onLocate }) {
     map.locate({ setView: false });
     map.once("locationfound", (e) => {
       const latlng = [e.latlng.lat, e.latlng.lng];
-
       map.flyTo(latlng, 16, {
         duration: 1.5,
       });
-
-      // Update state if needed
       onLocate(e.latlng);
     });
   };
@@ -91,14 +111,11 @@ const MapPage = () => {
       try {
         const response = await fetch(
           "http://localhost:3000/api/reportsLocation"
-        ); //  API endpoint
+        );
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-
         const data = await response.json();
-        // console.log("Fetched incidents:", data);
-
         setIncidents(data);
       } catch (error) {
         console.error("Failed to fetch incidents", error);
@@ -106,6 +123,7 @@ const MapPage = () => {
     }
     fetchIncidents();
   }, []);
+
   const { t } = useTranslation();
   const [position, setPosition] = useState([27.7111, 83.4681]);
   const [userLocation, setUserLocation] = useState(null);
@@ -138,124 +156,160 @@ const MapPage = () => {
     setSelectedTypes(all);
   };
 
+  const visibleIncidents = incidents.filter((i) => selectedTypes[i.type]);
+
   return (
-    <div className="relative min-h-screen bg-gray-100">
-      <div className="w-full flex align-middle justify-center">
-        <header className="p-4 text-lg font-bold text-blue-700 bg-transparent border-b shadow-sm text-center">
-          {t("map.title")}
-        </header>
-        {/* Dropdown Filter */}
-        <div className="relative p-4 bg-transparent border-b w-fit">
-          <button
-            onClick={() => setDropdownOpen((prev) => !prev)}
-            className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded shadow-sm w-full justify-between"
-          >
-            <span>{t("map.filterLabel")}</span>
-            <ChevronDown size={18} />
-          </button>
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+    >
+      <div className="relative min-h-screen bg-gray-100">
+        <div className="w-full flex align-middle justify-center">
+          <header className="p-4 text-lg font-bold text-blue-700 bg-transparent border-b shadow-sm text-center">
+            {t("map.title")}
+          </header>
+          <div className="relative p-4 bg-transparent border-b w-fit">
+            <button
+              onClick={() => setDropdownOpen((prev) => !prev)}
+              className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded shadow-sm w-full justify-between"
+            >
+              <span>{t("map.filterLabel")}</span>
+              <ChevronDown size={18} />
+            </button>
 
-          {dropdownOpen && (
-            <div className="absolute z-50 mt-2 w-full bg-white border shadow rounded p-3 space-y-2">
-              {incidentTypesConfig.map((type) => (
-                <label
-                  key={type.key}
-                  className="flex items-center gap-2 text-sm cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={selectedTypes[type.key]}
-                    onChange={() => toggleType(type.key)}
-                  />
-                  <img
-                    src={`/icons/map-icons-red/${type.key}.svg`}
-                    alt={type.key}
-                    className="w-5 h-5"
-                  />
-                  {t(`incidentTypes.${type.key}`)}
-                </label>
-              ))}
-              <div className="flex gap-2 pt-2">
-                <button
-                  onClick={() => setAll(true)}
-                  className="flex items-center gap-1 bg-green-600 text-white text-xs px-3 py-1 rounded"
-                >
-                  <CheckCircle size={14} /> {t("map.selectAll")}
-                </button>
-                <button
-                  onClick={() => setAll(false)}
-                  className="flex items-center gap-1 bg-red-600 text-white text-xs px-3 py-1 rounded"
-                >
-                  <XCircle size={14} /> {t("map.clearAll")}
-                </button>
+            {dropdownOpen && (
+              <div className="absolute z-50 mt-2 w-full bg-white border shadow rounded p-3 space-y-2">
+                {incidentTypesConfig.map((type) => (
+                  <label
+                    key={type.key}
+                    className="flex items-center gap-2 text-sm cursor-pointer"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedTypes[type.key]}
+                      onChange={() => toggleType(type.key)}
+                    />
+                    <img
+                      src={`/icons/map-icons-red/${type.key}.svg`}
+                      alt={type.key}
+                      className="w-5 h-5"
+                    />
+                    {t(`incidentTypes.${type.key}`)}
+                  </label>
+                ))}
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => setAll(true)}
+                    className="flex items-center gap-1 bg-green-600 text-white text-xs px-3 py-1 rounded"
+                  >
+                    <CheckCircle size={14} /> {t("map.selectAll")}
+                  </button>
+                  <button
+                    onClick={() => setAll(false)}
+                    className="flex items-center gap-1 bg-red-600 text-white text-xs px-3 py-1 rounded"
+                  >
+                    <XCircle size={14} /> {t("map.clearAll")}
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
+
+        <MapContainer
+          center={position}
+          zoom={13}
+          scrollWheelZoom={true}
+          zoomControl={true}
+          whenCreated={(mapInstance) => {
+            mapRef.current = mapInstance;
+          }}
+          style={{ height: "80vh", width: "100%" }}
+          className="z-0"
+        >
+          {focusedIncident && <FlyToFocusedIncident incident={focusedIncident} />}
+          {!focusedIncident && userLocation && <FlyToUserLocation location={userLocation} />}
+
+          <TileLayer
+            attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          />
+
+          {userLocation && (
+            <Marker position={userLocation}>
+              <Popup>{t("map.youAreHere")}</Popup>
+            </Marker>
+          )}
+
+          <MarkerClusterGroup>
+            <AnimatePresence>
+              {visibleIncidents.length === 0 && (
+                <motion.div
+                  key="no-results"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="absolute top-40 left-1/2 transform -translate-x-1/2 bg-white text-gray-600 border rounded shadow px-4 py-2 z-[1000]"
+                >
+                  {t("map.noIncidents")}
+                </motion.div>
+              )}
+
+              {visibleIncidents.map((incident, index) => (
+                <motion.div
+                  key={incident.id}
+                  initial={{ opacity: 0, scale: 0.5, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.5, y: -10 }}
+                  transition={{ duration: 0.3, delay: index * 0.04 }}
+                >
+                  <Marker
+                    position={[incident.lat, incident.lng]}
+                    icon={
+                      focusedIncident?.id === incident.id
+                        ? getFocusedIcon(incident.type)
+                        : getIcon(incident.type)
+                    }
+                  >
+                    <Tooltip direction="top" offset={[0, -20]} opacity={1}>
+                      {incident.title}
+                    </Tooltip>
+
+                    <Popup>
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-1"
+                      >
+                        <strong>{incident.title}</strong>
+                        <div>{incident.time}</div>
+                        <button
+                          onClick={() => {
+                            const destination = `${incident.lat},${incident.lng}`;
+                            const url = `https://www.google.com/maps/dir//${destination}`;
+                            window.open(url, "_blank");
+                          }}
+                          className="mt-1 inline-block bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700 transition"
+                        >
+                          {t("map.showPath")}
+                        </button>
+                      </motion.div>
+                    </Popup>
+                  </Marker>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </MarkerClusterGroup>
+
+          <LocateButton onLocate={(pos) => setUserLocation([pos.lat, pos.lng])} />
+        </MapContainer>
       </div>
-      {/* Header */}
-
-      {/* Map */}
-      <MapContainer
-        center={position}
-        zoom={13}
-        scrollWheelZoom={true}
-        zoomControl={true}
-        whenCreated={(mapInstance) => {
-          mapRef.current = mapInstance;
-        }}
-        style={{
-          height: "80vh",
-          width: "100%",
-        }}
-        className="z-0"
-      >
-        {focusedIncident && <FlyToFocusedIncident incident={focusedIncident} />}
-        {!focusedIncident && userLocation && (
-          <FlyToUserLocation location={userLocation} />
-        )}
-        <TileLayer
-          attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        />
-
-        {userLocation && (
-          <Marker position={userLocation}>
-            <Popup>{t("map.youAreHere")}</Popup>
-          </Marker>
-        )}
-
-        <MarkerClusterGroup>
-          {incidents
-            .filter((i) => selectedTypes[i.type])
-            .map((incident) => (
-              <Marker
-                key={incident.id}
-                position={[incident.lat, incident.lng]}
-                icon={getIcon(incident.type)}
-              >
-                <Popup>
-                  <div className="space-y-1">
-                    <strong>{incident.title}</strong>
-                    <div>{incident.time}</div>
-                    <button
-                      onClick={() => {
-                        const destination = `${incident.lat},${incident.lng}`;
-                        const url = `https://www.google.com/maps/dir//${destination}`;
-                        window.open(url, "_blank");
-                      }}
-                      className="mt-1 inline-block bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700 transition"
-                    >
-                      {t("map.showPath")}
-                    </button>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-        </MarkerClusterGroup>
-
-        <LocateButton onLocate={(pos) => setUserLocation([pos.lat, pos.lng])} />
-      </MapContainer>
-    </div>
+    </motion.div>
   );
 };
 

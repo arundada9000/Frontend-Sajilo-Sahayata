@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
+  Home,
   Menu,
   X,
   LayoutDashboard,
@@ -16,6 +17,7 @@ export default function AdminSidebar() {
   const location = useLocation();
 
   const navItems = [
+    { label: "Home", to: "/", icon: <Home size={18} /> },
     { label: "Dashboard", to: "/admin", icon: <LayoutDashboard size={18} /> },
     {
       label: "Manage Users",
@@ -89,7 +91,7 @@ export default function AdminSidebar() {
           </div>
 
           {!collapsed && (
-            <p className="text-xs text-gray-500 mt-6">© 2025 Admin Panel</p>
+            <p className="text-xs text-gray-500 mt-6">© 2025 Sajilo Sahayata</p>
           )}
         </div>
       </aside>
